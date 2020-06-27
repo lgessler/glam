@@ -8,7 +8,7 @@
 (comment
 
   (do
-    (def conn (db/connect (java.net.URI. "neo4j://localhost:7687") "neo4j" "password"))
+    (def conn (db/connect (java.net.URI. "glam.neo4j://localhost:7687") "glam.neo4j" "password"))
     (def s (db/get-session conn))
     (db/execute s "MATCH (n) DETACH DELETE (n)")
 
@@ -28,7 +28,7 @@
 
   (do
     (def conn (db/create-in-memory-connection))
-    (def conn (db/connect (java.net.URI. "neo4j://localhost:7687") "neo4j" "password"))
+    (def conn (db/connect (java.net.URI. "glam.neo4j://localhost:7687") "glam.neo4j" "password"))
     (def s (db/get-session conn))
 
     (db/execute s "MATCH (n) DETACH DELETE (n)")
