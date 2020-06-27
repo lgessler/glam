@@ -1,0 +1,16 @@
+{:io.pedestal.http/config
+ {:env                              :prod
+  :io.pedestal.http/port            8085
+  :io.pedestal.http/allowed-origins ["localhost"]}
+
+ :taoensso.timbre/logging-config
+ {:level        :info
+  :ns-whitelist []
+  :ns-blacklist []}
+
+ :glam.server.pathom/config
+ {:connect-viz? false}
+
+ :glam.server.service/config
+ {:csp {:font-domains  ["cdnjs.cloudflare.com" "fonts.googleapis.com" "fonts.gstatic.com"]
+        :style-domains ["cdnjs.cloudflare.com" "fonts.googleapis.com"]}}}
