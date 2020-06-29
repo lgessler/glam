@@ -18,7 +18,7 @@
     [com.fulcrologic.semantic-ui.modules.transition.ui-transition :refer [ui-transition]]
     [dv.fulcro-util :as fu]
     [dv.fulcro-entity-state-machine :as fmachine]
-    [glam.data-model.task :as dm]
+    [glam.models.task :as dm]
     [sablono.core :refer [html]]
     [taoensso.timbre :as log]))
 
@@ -82,9 +82,10 @@
   (let [{:keys [checked? disabled?]} (fu/validator-state validator props)]
     [:div
      ^:inline (fu/notification {:ui/submit-state machine-state :ui/server-message message})
-     #_(when goog.DEBUG
+     #_#_
+     (when goog.DEBUG
          (fu/ui-button #(m/toggle! this :ui/show-form-debug?) "Debug form"))
-     #_(fu/form-debug validator this show-form-debug?)
+     (fu/form-debug validator this show-form-debug?)
 
      [:h3 nil "Enter a new task"]
 

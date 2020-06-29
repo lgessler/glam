@@ -77,6 +77,7 @@
                  (read-error? result))]
     (log/info "Remote error? " resp)
     resp))
+
 (defonce SPA
   (app/fulcro-app
     {:render-middleware (fn [this render] (html (render)))
