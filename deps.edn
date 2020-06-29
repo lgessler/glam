@@ -37,6 +37,8 @@
 
            ;; glam.neo4j
            gorillalabs/neo4j-clj               {:mvn/version "4.0.1"}
+           ;; missing dep from neo4j-clj
+           org.neo4j.test/neo4j-harness        {:mvn/version "4.0.0"}
 
            ;; Pedestal
            io.pedestal/pedestal.service        {:mvn/version "0.5.8"}
@@ -48,9 +50,8 @@
  :aliases {:depstar {:extra-deps {seancorfield/depstar {:mvn/version "1.0.94"}}}
            :test    {:extra-paths ["src/test"]
                      :main-opts   ["-m" "cognitect.test-runner"]
-                     :extra-deps  {com.cognitect/test-runner    {:git/url "https://github.com/cognitect-labs/test-runner.git"
-                                                                 :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}
-                                   org.neo4j.test/neo4j-harness {:mvn/version "4.0.0"}}}
+                     :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                                              :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}}
            :dev     {:extra-paths ["src/dev" "src/test" "src/workspaces" "src/devcards"]
                      :jvm-opts    ["-XX:-OmitStackTraceInFastThrow"]
 
