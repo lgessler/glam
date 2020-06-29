@@ -21,7 +21,7 @@ write_prn_file() {
 ;; To use from within the browser dev tools console
 (set! js/pprint_str pprint-str)
 (set! js/pprint pprint)
-" > src/main/com/lgessler/glam/client/prn_debug.cljs
+" > src/main/glam/client/prn_debug.cljs
 }
 
 main() {
