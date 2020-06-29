@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [glam.neo4j.core :refer [one]]
             [glam.neo4j.project :as prj]
+            [glam.neo4j.document :as doc]
             [glam.neo4j.core-test :refer [session with-session]]
             [glam.neo4j.user :as user]
             [neo4j-clj.core :as db])
@@ -37,3 +38,11 @@
              <-[r:WRITE_ACCESS]-(p:Project {uuid: $project_uuid}) RETURN r"
                          {:user_uuid user-uuid :project_uuid prj-uuid}))))
     (user/revoke-writer session {:user_uuid user-uuid :project_uuid prj-uuid})))
+
+(deftest add-text-document
+  (let [prj-uuid (one (prj/get-id-by-name session {:name "existing"}))
+        doc-uuid (one (prj/add-document session {:name "doc1"}))]
+    (is (= 1 (count (prj/get-document-ids session {:uuid prj-uuid}))))
+    (doc/delete session {:uuid doc-uuid})
+    (is (= 0 (count (prj/get-document-ids session {:uuid prj-uuid}))))
+    ))
