@@ -25,3 +25,4 @@
   [db-connection]
   (doseq [migration migrations]
     (apply-migration db-connection migration)))
+
