@@ -1,7 +1,7 @@
 (ns glam.server.db-layer
   (:require
     [com.fulcrologic.guardrails.core :refer [>defn >def | => ?]]
-    [glam.data-model.task :as dm]
+    [glam.models.task :as dm]
     [dv.crux-util :as cu]
     [taoensso.timbre :as log]))
 

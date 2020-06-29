@@ -6,7 +6,6 @@
     [com.fulcrologic.fulcro.server.api-middleware :refer [handle-api-request]]
     [com.fulcrologic.guardrails.core :refer [>defn => | ?]]
     [dv.crux-node :refer [crux-node]]
-    [dv.crux-ring-session-store :refer [crux-session-store]]
     [dv.fulcro-util :as fu]
     [hiccup.page :refer [html5]]
     [io.pedestal.http :as http]
@@ -47,7 +46,7 @@
            [:script (str "var fulcro_network_csrf_token = '" csrf-token "';")]]
           [:body
            [:div#app]
-           [:script {:src (str "/js/main/" (get-js-filename))}]]))
+           [:script {:src (str "/js/main/" js-filename)}]]))
     (throw (Exception. (str "Error reading JavaScript filename from shadow-cljs manifest.edn file.
     The filename is nil, you probably need to wait for the shadow-cljs build to complete or start it again.
     Check manifest.edn in the shadow-cljs build directory.")))))
@@ -170,8 +169,7 @@
     {:env                  :prod
      ::http/routes         []
      ::http/resource-path  "/public"
-     ::http/enable-session {:store        (crux-session-store crux-node)
-                            :cookie-attrs {:secure    (not dev?)
+     ::http/enable-session {:cookie-attrs {:secure    (not dev?)
                                            :same-site :strict
                                            ;; expires in two weeks
                                            :max-age   1209600}}

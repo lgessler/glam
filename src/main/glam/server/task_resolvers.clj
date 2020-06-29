@@ -6,7 +6,7 @@
     [com.fulcrologic.guardrails.core :refer [>defn >def | => ?]]
     [com.wsscode.pathom.connect :as pc]
     [glam.auth.user :as user]
-    [glam.data-model.task :as dm]
+    [glam.models.task :as dm]
     [glam.server.db-layer :as dl]
     [dv.fulcro-util :as fu]
     [dv.crux-util :as cu]
