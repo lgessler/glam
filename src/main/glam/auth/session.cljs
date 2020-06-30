@@ -17,23 +17,23 @@
   (log/info "logout env: " env)
   (let [env
         (-> env
-          (clear)
-          (sm/assoc-aliased :username "" :session-valid? false :current-user "")
-          (sm/trigger-remote-mutation :actor/login-form `logout {})
-          (sm/activate :state/logged-out))]
+            (clear)
+            (sm/assoc-aliased :username "" :session-valid? false :current-user "")
+            (sm/trigger-remote-mutation :actor/login-form `logout {})
+            (sm/activate :state/logged-out))]
     (r/change-route! :root)
     env))
 
 (defn login [{::sm/keys [event-data] :as env}]
   (-> env
-    (clear)
-    (sm/trigger-remote-mutation :actor/login-form 'glam.auth.session/login
-      {:username        (:username event-data)
-       :password        (:password event-data)
-       ::m/returning    (sm/actor-class env :actor/current-session)
-       ::sm/ok-event    :event/complete
-       ::sm/error-event :event/failed})
-    (sm/activate :state/checking-session)))
+      (clear)
+      (sm/trigger-remote-mutation :actor/login-form 'glam.auth.session/login
+                                  {:username        (:username event-data)
+                                   :password        (:password event-data)
+                                   ::m/returning    (sm/actor-class env :actor/current-session)
+                                   ::sm/ok-event    :event/complete
+                                   ::sm/error-event :event/failed})
+      (sm/activate :state/checking-session)))
 
 (defn process-session-result
   "Called on app boot and to validate logging in. See if we have a session from the backend."
@@ -46,20 +46,20 @@
       (not success?)
       (r/change-route! :signup))
     (cond-> (clear env)
-      success? (->
-                 (sm/assoc-aliased :modal-open? false)
-                 (sm/activate :state/logged-in))
-      (not success?) (->
-                       (sm/assoc-aliased :error error-message)
-                       (sm/activate :state/logged-out)))))
+            success? (->
+                       (sm/assoc-aliased :modal-open? false)
+                       (sm/activate :state/logged-in))
+            (not success?) (->
+                             (sm/assoc-aliased :error error-message)
+                             (sm/activate :state/logged-out)))))
 
 (defn initial-load [env]
   (sm/load env
-    ::current-session
-    :actor/current-session
+           ::current-session
+           :actor/current-session
 
-    {::sm/ok-event    :event/complete
-     ::sm/error-event :event/failed}))
+           {::sm/ok-event    :event/complete
+            ::sm/error-event :event/failed}))
 
 (def global-events
   {:event/close-modal  {::sm/handler (fn [env] (sm/assoc-aliased env :modal-open? false))}
@@ -89,23 +89,33 @@
 
     :state/checking-session
     {::sm/events (merge global-events
-                   {:event/failed   {::sm/target-states #{:state/logged-out}
-                                     ::sm/handler       (fn [env]
-                                                          (-> env
-                                                            (clear)
-                                                            (sm/activate :state/logged-out)
-                                                            (sm/assoc-aliased :error (fu/get-server-mutation-err env))))}
-                    :event/complete {::sm/target-states #{:state/logged-out :state/logged-in}
-                                     ::sm/handler       #(process-session-result % "Invalid Credentials." true)}})}
+                        {:event/failed   {::sm/target-states #{:state/logged-out}
+                                          ::sm/handler       (fn [env]
+                                                               (-> env
+                                                                   (clear)
+                                                                   (sm/activate :state/logged-out)
+                                                                   (sm/assoc-aliased :error (fu/get-server-mutation-err env))))}
+                         :event/complete {::sm/target-states #{:state/logged-out :state/logged-in}
+                                          ::sm/handler       #(process-session-result % "Invalid Credentials." true)}})}
 
     :state/logged-in
     {::sm/events (merge global-events
-                   {:event/logout {::sm/target-states #{:state/logged-out}
-                                   ::sm/handler       logout}})}
+                        {:event/logout {::sm/target-states #{:state/logged-out}
+                                        ::sm/handler       logout}})}
 
     :state/logged-out
     {::sm/events (merge global-events
-                   {:event/signup-success {::sm/target-state :state/logged-in}
-                    :event/login          {::sm/target-states #{:state/checking-session}
-                                           ::sm/handler       login}})}}})
+                        {:event/signup-success {::sm/target-state :state/logged-in}
+                         :event/login          {::sm/target-states #{:state/checking-session}
+                                                ::sm/handler       login}})}}})
 
+
+(defmacro something
+  [& forms]
+  (let [pairs (->> forms
+                   (partition 2)
+                   (keep (fn [pair]
+                           (when (first pair)
+                             (second pair))))
+                   (into []))]
+    pairs))

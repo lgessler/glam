@@ -12,33 +12,33 @@
     [glam.auth.login :refer [ui-login Login Session session-join valid-session?]]
     [glam.auth.signup :refer [Signup]]))
 
- (dr/defrouter TopRouter
-   [this {:keys [current-state route-factory route-props]}]
-   {:router-targets [TaskPage Signup]})
+(dr/defrouter TopRouter
+  [this {:keys [current-state route-factory route-props]}]
+  {:router-targets [TaskPage Signup]})
 
- (def ui-top-router (c/factory TopRouter))
+(def ui-top-router (c/factory TopRouter))
 
- (defn menu [{:keys [session? login]}]
-   (div :.ui.secondary.pointing.menu
-     (conj
-       (mapv r/link (if session? [:root :tasks] [:root]))
-       (ui-login login))))
+(defn menu [{:keys [session? login]}]
+  [:div.ui.secondary.pointing.menu
+   (conj
+     (mapv r/link (if session? [:root :tasks] [:root]))
+     (ui-login login))])
 
-  (defsc PageContainer [this {:root/keys [router login] :as props}]
-    {:query         [{:root/router (c/get-query TopRouter)}
-                     [::sm/asm-id ::TopRouter]
-                     session-join
-                     {:root/login (c/get-query Login)}]
-     :ident         (fn [] [:component/id :page-container])
-     :initial-state (fn [_] {:root/router             (c/get-initial-state TopRouter {})
-                             :root/login              (c/get-initial-state Login {})
-                             :root/signup             (c/get-initial-state Signup {})
-                             [:component/id :session] (c/get-initial-state Session {})})}
-    (let [current-tab (r/current-route this)
-          session? (valid-session? props)]
-      [:.ui.container
-       ^:inline (menu {:session? session? :login login})
-       ^:inline (ui-top-router router)]))
+(defsc PageContainer [this {:root/keys [router login] :as props}]
+  {:query         [{:root/router (c/get-query TopRouter)}
+                   [::sm/asm-id ::TopRouter]
+                   session-join
+                   {:root/login (c/get-query Login)}]
+   :ident         (fn [] [:component/id :page-container])
+   :initial-state (fn [_] {:root/router             (c/get-initial-state TopRouter {})
+                           :root/login              (c/get-initial-state Login {})
+                           :root/signup             (c/get-initial-state Signup {})
+                           [:component/id :session] (c/get-initial-state Session {})})}
+  (let [current-tab (r/current-route this)
+        session? (valid-session? props)]
+    [:.ui.container
+     ^:inline (menu {:session? session? :login login})
+     ^:inline (ui-top-router router)]))
 
 (def ui-page-container (c/factory PageContainer))
 

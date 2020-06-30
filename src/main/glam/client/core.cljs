@@ -34,7 +34,7 @@
   (router/init! SPA)
   (log/info "Starting session machine.")
   (uism/begin! SPA session/session-machine ::session/session
-    {:actor/login-form      Login
-     :actor/current-session Session})
-   (log/info "MOUNTING APP")
+               {:actor/login-form      Login
+                :actor/current-session Session})
+  (log/info "MOUNTING APP")
   (js/setTimeout #(app/mount! SPA root/Root "app" {:initialize-state? false})))
