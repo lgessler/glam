@@ -9,12 +9,13 @@
     [glam.client.application :refer [SPA]]
     [glam.client.router :as r]
     [glam.client.ui.task-page :refer [TaskPage]]
+    [glam.client.ui.projects-page :refer [ProjectsPage]]
     [glam.auth.login :refer [ui-login Login Session session-join valid-session?]]
     [glam.auth.signup :refer [Signup]]))
 
 (dr/defrouter TopRouter
   [this {:keys [current-state route-factory route-props]}]
-  {:router-targets [TaskPage Signup]})
+  {:router-targets [TaskPage Signup ProjectsPage]})
 
 (def ui-top-router (c/factory TopRouter))
 

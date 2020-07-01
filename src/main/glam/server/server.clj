@@ -3,7 +3,6 @@
     [clojure.pprint :refer [pprint]]
     [io.pedestal.http :as http]
     [mount.core :refer [defstate]]
-    dv.crux-node
     [glam.server.config :refer [config]]
     [glam.server.service :as service]
     [taoensso.timbre :as log]))

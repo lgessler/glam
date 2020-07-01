@@ -12,5 +12,10 @@
     :trace?          true
     :log-responses?  true}
 
+ :glam.server.neo4j/config
+   {:url "neo4j://localhost:7687"
+    :username "neo4j"
+    :password "password"}
+
  :glam.server.service/config
    {:dev? true}}

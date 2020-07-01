@@ -11,6 +11,15 @@
                (= 1 (count (keys (first db-result))))))
   (-> db-result first vals first))
 
+(defn ones
+  "Assert that a db result sequence like ({:user {:age 1}} {:user {:age 2}})
+  is a seq of maps with exactly one key and return the same seq with only the
+  values remaining, e.g. ({:age 1} {:age 2})"
+  [db-result-seq]
+  (assert (and (every? map? db-result-seq)
+               (every? #(= 1 (count (keys %))) db-result-seq)))
+  (map #(-> % vals first) db-result-seq))
+
 (defn- apply-migration
   [db-connection resource-path]
   (db/with-transaction db-connection tx

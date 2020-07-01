@@ -40,9 +40,22 @@
 ;; in a component use (r/route-segment :tasks) to ge the fulcro segment.
 
 (def routes
-  [["/" {:name :root :segment ["signup"]}]
-   ["/tasks" {:name :tasks :segment ["tasks"]}]
-   ["/signup" {:name :signup :segment ["signup"]}]])
+  [["/"
+    {:name :root
+     :segment ["signup"]}]
+   ["/projects"
+    {:name :projects
+     :segment ["projects"]}]
+   #_["/projects/:slug"
+    {:name :project
+     :segment ["project"]
+     :parameters {:path {:slug string?}}}]
+   ["/tasks"
+    {:name :tasks
+     :segment ["tasks"]}]
+   ["/signup"
+    {:name :signup
+     :segment ["signup"]}]])
 
 ;; example of possible redirect logic setup:
 ;   ["/goals" {:name :goals :redirect-to {:route :goals-date :params (fn [] {:date (t/today)})}}]

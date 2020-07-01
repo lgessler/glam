@@ -52,6 +52,7 @@
 (pc/defresolver all-tasks [{:keys [crux-node]} {:task/keys [id]}]
   {::pc/output [{:all-tasks dm/db-task-keys}]}
   (log/info "all-tasks resolver")
+  (println {:all-tasks (dl/get-all-tasks crux-node)})
   {:all-tasks (dl/get-all-tasks crux-node)})
 
 (def resolvers [create-task-mutation get-task all-tasks])
