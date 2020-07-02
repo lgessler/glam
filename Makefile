@@ -42,7 +42,7 @@ watch-client-test:
 fe-test:
 > yarn shadow-cljs compile ci-tests
 > yarn karma start --single-run
-> clj -A:dev:clj-tests
+> clj -A:test -d src/test
 
 watch-all: watch-$(fe-module)watch-workspaceswatch-client-test
 
