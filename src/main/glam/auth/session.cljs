@@ -109,13 +109,3 @@
                          :event/login          {::sm/target-states #{:state/checking-session}
                                                 ::sm/handler       login}})}}})
 
-
-(defmacro something
-  [& forms]
-  (let [pairs (->> forms
-                   (partition 2)
-                   (keep (fn [pair]
-                           (when (first pair)
-                             (second pair))))
-                   (into []))]
-    pairs))
