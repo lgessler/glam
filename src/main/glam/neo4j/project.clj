@@ -4,17 +4,19 @@
 
 (defquery-1 create
             "WITH randomUUID() AS uuid
-            CREATE (p:Project {name: $name, uuid: uuid})
+            CREATE (p:Project {name: $name, slug: $slug, uuid: uuid})
             RETURN uuid")
 
 (defquery get-all "MATCH (p:Project) RETURN p AS project")
 (defquery-1 get-count "MATCH (p:Project) RETURN count(p) AS count")
 
 (defquery-1 get-id-by-name "MATCH (p:Project) WHERE p.name = $name RETURN p.uuid AS uuid")
+(defquery-1 get-id-by-slug "MATCH (p:Project) WHERE p.slug = $slug RETURN p.uuid AS uuid")
 
 (defquery-1 get-props "MATCH (p:Project) WHERE p.uuid = $uuid RETURN p AS props")
 
 (defquery set-name "MATCH (p:Project) WHERE p.uuid = $uuid SET p.name = $name")
+(defquery set-slug "MATCH (p:Project) WHERE p.uuid = $uuid SET p.slug = $slug")
 (defquery delete "MATCH (p:Project) WHERE p.uuid = $uuid DELETE p")
 
 ;; Cascading delete: don't just delete the project, delete EVERYTHING dependent on it (!)

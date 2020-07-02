@@ -15,14 +15,14 @@
 
 (defn with-project
   [f]
-  (let [uuid (prj/create session {:name "existing"})]
+  (let [uuid (prj/create session {:name "existing" :slug "existing"})]
     (f)
     (prj/delete session {:uuid uuid})))
 
 (use-fixtures :once with-session with-user with-project)
 
 (deftest create
-  (let [uuid (prj/create session {:name "test"})]
+  (let [uuid (prj/create session {:name "test" :slug "test"})]
     (is (= 2 (count (prj/get-all session))))
     (prj/delete session {:uuid uuid})))
 

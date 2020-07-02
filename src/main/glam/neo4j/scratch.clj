@@ -40,7 +40,7 @@
 
     (db/execute s "MATCH (n) DETACH DELETE (n)")
 
-    (def prj-id (prj/create s {:name "test"}))
+    (def prj-id (prj/create s {:name "test" :slug "test"}))
     prj-id
 
     (def doc1-id (prj/add-document s {:project_uuid prj-id :name "doc1"}))
