@@ -117,11 +117,17 @@
           (fu/hover-hand nil (str current-user ent/nbsp "Log out"))]
 
          [html/fragment
-          ^:inline (r/link :signup
+          #_^:inline (r/link :signup
                      {:onClick
                       (fn []
                         (when open? (close-modal! this))
                         (r/change-route! this :signup))})
+
+          (r/link :settings
+                  {:onClick
+                   (fn []
+                     (when open? (close-modal! this))
+                     (r/change-route! this :settings))})
 
           [:div {:className "item" :key "login" :onClick #(toggle-modal! this)}
            (fu/hover-hand #js{:key "login-label"} "Login")
