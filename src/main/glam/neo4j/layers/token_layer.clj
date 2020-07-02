@@ -1,14 +1,14 @@
 (ns glam.neo4j.layers.token-layer
-  (:require [neo4j-clj.core :as db]))
+  (:require [glam.neo4j.core :refer [defquery defquery-1]]))
 
 
-(db/defquery delete
+(defquery delete
   "MATCH (tl:TokenLayer {uuid: $uuid})
   OPTIONAL MATCH (tl)<-[rels*]-(n)
   WHERE NONE (r IN rels WHERE type(r) = \"NEXT_TOKEN_LAYER\")
   DETACH DELETE tl,n")
 
-(db/defquery add-span-layer
+(defquery-1 add-span-layer
   "WITH randomUUID() as uuid
   MATCH (tokenLayer:Layer:TokenLayer {uuid: $token_layer_uuid})
   OPTIONAL MATCH (lastSpanLayer:Layer:SpanLayer)-[:SPAN_LAYER_OF]->(tokenLayer)

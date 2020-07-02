@@ -2,16 +2,7 @@
   (:require [clojure.java.io :as io]
             [neo4j-clj.core :as db]))
 
-(defn one
-  "Assert that a db result like ({:user {:age 1}}) is a seq of length 1
-  and contains a map with exactly one key, and return the map, {:age 1}"
-  [db-result]
-  (assert (and (= 1 (count db-result))
-               (map? (first db-result))
-               (= 1 (count (keys (first db-result))))))
-  (-> db-result first vals first))
-
-(defn ones
+(defn squish-key
   "Assert that a db result sequence like ({:user {:age 1}} {:user {:age 2}})
   is a seq of maps with exactly one key and return the same seq with only the
   values remaining, e.g. ({:age 1} {:age 2})"
@@ -23,9 +14,9 @@
 (defn- apply-migration
   [db-connection resource-path]
   (db/with-transaction db-connection tx
-    (doseq [query (-> resource-path clojure.java.io/resource slurp (clojure.string/split #";"))]
-      (when-not (clojure.string/blank? query)
-        (db/execute tx query)))))
+                                     (doseq [query (-> resource-path clojure.java.io/resource slurp (clojure.string/split #";"))]
+                                       (when-not (clojure.string/blank? query)
+                                         (db/execute tx query)))))
 
 (def migrations
   ["migrations/20200625-init.up.cypher"])
@@ -34,4 +25,68 @@
   [db-connection]
   (doseq [migration migrations]
     (apply-migration db-connection migration)))
+
+;; Cypher (and therefore calls to neo4j-clj's `defquery` as well)
+;; returns sequences of maps by default. But sometimes we can tell
+;; that for a certain query we'll always want either (1) a single value
+;; instead of a sequence, (2) only the value of the map when it has a
+;; single k-v pair, or (3) both. We'll extend the defquery macro to handle
+;; these cases, using "1" to indicate we want a single return value, and
+;; "keys" to indicate maps will have MORE than one k-v pair.
+;; defquery
+
+;; no key squishing, many results
+(defmacro defquery-nosquish
+  [query-name query]
+  `(db/defquery ~query-name ~query))
+
+;; no key squishing, one result
+(defmacro defquery-nosquish-1
+  [query-name cypher-query]
+  (let [internal-query (symbol (str query-name "__internal"))]
+    `(do
+       (db/defquery ~internal-query ~cypher-query)
+       (defn ~query-name
+         ([sess#]
+          (-> sess#
+              (~internal-query)
+              first))
+         ([sess# params#]
+          (-> sess#
+              (~internal-query params#)
+              first))))))
+
+;; key squishing, many results
+(defmacro defquery
+  [query-name cypher-query]
+  (let [internal-query (symbol (str query-name "__internal"))]
+    `(do
+       (db/defquery ~internal-query ~cypher-query)
+       (defn ~query-name
+         ([sess#]
+          (-> sess#
+              (~internal-query)
+              squish-key))
+         ([sess# params#]
+          (-> sess#
+              (~internal-query params#)
+              squish-key))))))
+
+;; key squishing, one result
+(defmacro defquery-1
+  [query-name cypher-query]
+  (let [internal-query (symbol (str query-name "__internal"))]
+    `(do
+       (db/defquery ~internal-query ~cypher-query)
+       (defn ~query-name
+         ([sess#]
+          (-> sess#
+              (~internal-query)
+              squish-key
+              first))
+         ([sess# params#]
+          (-> sess#
+              (~internal-query params#)
+              squish-key
+              first))))))
 

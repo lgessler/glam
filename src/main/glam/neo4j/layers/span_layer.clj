@@ -1,7 +1,7 @@
 (ns glam.neo4j.layers.span-layer
-  (:require [neo4j-clj.core :as db]))
+  (:require [glam.neo4j.core :refer [defquery]]))
 
-(db/defquery delete
+(defquery delete
   "MATCH (tl:TokenLayer {uuid: $uuid})
   OPTIONAL MATCH (tl)<-[rels*]-(n)
   WHERE NONE (r IN rels WHERE type(r) = \"NEXT_TEXT_LAYER\")

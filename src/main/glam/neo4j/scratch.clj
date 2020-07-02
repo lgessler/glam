@@ -33,19 +33,20 @@
     )
 
   (do
-    #_(def conn (db/create-in-memory-connection))
+    (def conn (db/create-in-memory-connection))
     (def conn (db/connect (java.net.URI. "neo4j://localhost:7687") "neo4j" "password"))
+
     (def s (db/get-session conn))
 
     (db/execute s "MATCH (n) DETACH DELETE (n)")
 
-    (def prj-id (core/one (prj/create s {:name "test"})))
+    (def prj-id (prj/create s {:name "test"}))
     prj-id
 
     (def doc1-id (prj/add-document s {:project_uuid prj-id :name "doc1"}))
     (def doc2-id (prj/add-document s {:project_uuid prj-id :name "doc2"}))
 
-    (def document-id (core/one (prj/add-document s {:project_uuid prj-id :name "doc3"})))
+    (def document-id (prj/add-document s {:project_uuid prj-id :name "doc3"}))
     document-id
 
     (db/execute s "MATCH (n) RETURN n,labels(n) ")
@@ -53,14 +54,15 @@
     (prj/add-text-layer s {:name "layer1" :project_uuid prj-id})
     (prj/add-text-layer s {:name "layer2" :project_uuid prj-id})
     (prj/add-text-layer s {:name "layer3" :project_uuid prj-id})
-    (def text-layer-id (core/one (prj/add-text-layer s {:name "layer4" :project_uuid prj-id})))
+    (def text-layer-id (prj/add-text-layer s {:name "layer4" :project_uuid prj-id}))
 
     (text/add-token-layer s {:text_layer_uuid text-layer-id :name "token-layer1"})
     (text/add-token-layer s {:text_layer_uuid text-layer-id :name "token-layer2"})
     (text/add-token-layer s {:text_layer_uuid text-layer-id :name "token-layer3"})
-    (def token-layer-id (core/one (text/add-token-layer s {:name "tokens4" :text_layer_uuid text-layer-id})))
+    (def token-layer-id (text/add-token-layer s {:name "tokens4" :text_layer_uuid text-layer-id}))
 
     (token/add-span-layer s {:name "span1" :token_layer_uuid token-layer-id})
+
 
     )
 

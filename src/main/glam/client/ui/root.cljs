@@ -22,7 +22,7 @@
 (defn menu [{:keys [session? login]}]
   [:div.ui.secondary.pointing.menu
    (conj
-     (mapv r/link (if session? [:root :tasks] [:root]))
+     (mapv r/link (if session? [:projects] [:root]))
      (ui-login login))])
 
 (defsc PageContainer [this {:root/keys [router login] :as props}]
