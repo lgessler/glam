@@ -50,7 +50,7 @@
       (log/info "Signup success result: " result)
       (df/remove-load-marker! app ::signup)
       (when (:session/valid? session)
-        (r/change-route! :tasks)
+        (r/route-to! "/")
         (uism/trigger! app ::session/session :event/signup-success))))
 
   (error-action [{:keys [app]}]
@@ -87,12 +87,12 @@
                        [df/marker-table ::signup]]
    :initial-state     (fn [_]
                         (fs/add-form-config Signup
-                          {:account/email          ""
-                           :account/password       ""
-                           :account/password-again ""}))
+                                            {:account/email          ""
+                                             :account/password       ""
+                                             :account/password-again ""}))
    :form-fields       #{:account/email :account/password :account/password-again}
    :ident             (fn [] signup-ident)
-   :route-segment     (r/route-segment :signup)
+   :route-segment     [""]
    :componentDidMount (fn [this] (comp/transact! this [(clear-signup-form {})]))}
   (let [server-err (:session/server-error-msg (get-session props))
         form-valid? (= :valid (validator props))

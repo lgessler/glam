@@ -20,6 +20,7 @@
 
            metosin/reitit                      {:mvn/version "0.5.2"}
            metosin/reitit-pedestal             {:mvn/version "0.5.2"}
+           clj-commons/pushy                   {:mvn/version "0.3.10"}
            com.wsscode/pathom                  {:mvn/version "2.2.31"}
            hiccup                              {:mvn/version "2.0.0-alpha2"}
 

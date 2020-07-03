@@ -21,7 +21,7 @@
             (sm/assoc-aliased :username "" :session-valid? false :current-user "")
             (sm/trigger-remote-mutation :actor/login-form `logout {})
             (sm/activate :state/logged-out))]
-    (r/change-route! :root)
+    (r/route-to! "/")
     env))
 
 (defn login [{::sm/keys [event-data] :as env}]
@@ -42,9 +42,9 @@
     (log/info "PROCESS SESSION RESULT , CHROUTE? " chroute?)
     (cond
       (and chroute? success?)
-      (r/change-route! :root)
+      (r/route-to! "/")
       (not success?)
-      (r/change-route! :signup))
+      (r/route-to! "/"))
     (cond-> (clear env)
             success? (->
                        (sm/assoc-aliased :modal-open? false)

@@ -42,6 +42,11 @@
 
     (def prj-id (prj/create s {:name "test" :slug "test"}))
     prj-id
+    (prj/get-props s {:uuid prj-id})
+    (->> (prj/get-all-ids s)
+         (map #(clojure.set/rename-keys % {:uuid :project/id})))
+
+    (prj/get-all s)
 
     (def doc1-id (prj/add-document s {:project_uuid prj-id :name "doc1"}))
     (def doc2-id (prj/add-document s {:project_uuid prj-id :name "doc2"}))
@@ -63,10 +68,9 @@
 
     (token/add-span-layer s {:name "span1" :token_layer_uuid token-layer-id})
 
-
     )
 
-    (println token/add-span-layer)
+  (println token/add-span-layer)
 
   )
 

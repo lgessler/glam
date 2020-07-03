@@ -3,15 +3,16 @@
             [glam.neo4j.core :refer [defquery-nosquish defquery-nosquish-1 defquery-1 defquery]]))
 
 (defquery-1 create
-            "WITH randomUUID() AS uuid
-            CREATE (p:Project {name: $name, slug: $slug, uuid: uuid})
-            RETURN uuid")
+  "WITH randomUUID() AS uuid
+  CREATE (p:Project {name: $name, slug: $slug, uuid: uuid})
+  RETURN uuid")
 
 (defquery get-all "MATCH (p:Project) RETURN p AS project")
+(defquery-nosquish get-all-ids "MATCH (p:Project) RETURN p.uuid AS uuid")
 (defquery-1 get-count "MATCH (p:Project) RETURN count(p) AS count")
 
-(defquery-1 get-id-by-name "MATCH (p:Project) WHERE p.name = $name RETURN p.uuid AS uuid")
-(defquery-1 get-id-by-slug "MATCH (p:Project) WHERE p.slug = $slug RETURN p.uuid AS uuid")
+(defquery-nosquish-1 get-id-by-name "MATCH (p:Project) WHERE p.name = $name RETURN p.uuid AS uuid")
+(defquery-nosquish-1 get-id-by-slug "MATCH (p:Project) WHERE p.slug = $slug RETURN p.uuid AS uuid")
 
 (defquery-1 get-props "MATCH (p:Project) WHERE p.uuid = $uuid RETURN p AS props")
 
