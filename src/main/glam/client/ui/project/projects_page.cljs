@@ -9,12 +9,14 @@
   [this {:project/keys [id name slug] :as props}]
   {:query (fn [_] [:project/id :project/name :project/slug])
    :ident :project/id}
+  [:div.ui.breadcrumb
+   ]
   [:div
    [:h4 "Project"]
    [:div "id: " (pr-str id)]
    [:div "name: " (pr-str name)]
    [:div "slug: " (pr-str slug)
-    (r/link (str "/project/" slug) name)
+    (r/link :project {:id id} name)
 
     #_(r/link :project {:onClick #(r/change-route! :project)})]
    (fu/props-data-debug this true)])

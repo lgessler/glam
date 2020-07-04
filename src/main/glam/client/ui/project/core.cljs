@@ -8,7 +8,6 @@
     [glam.client.ui.project.project-detail :refer [ProjectDetail]]
     [dv.fulcro-util :as fu]))
 
-
 ;; top level --------------------------------------------------------------------------------
 ;; router for all routes under "/project/" is contained in a container component, Projects
 (defrouter ProjectRouter

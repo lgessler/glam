@@ -9,7 +9,8 @@
     [glam.auth.login :refer [Login Session]]
     [glam.auth.session :as session]
     [shadow.resource :as rc]
-    [taoensso.timbre :as log]))
+    [taoensso.timbre :as log]
+    [com.fulcrologic.fulcro.data-fetch :as df]))
 
 ;; set logging lvl using goog-define, see shadow-cljs.edn
 (goog-define LOG_LEVEL "warn")
@@ -37,4 +38,6 @@
                {:actor/login-form      Login
                 :actor/current-session Session})
   (log/info "MOUNTING APP")
+  (log/info "Loading Slugs")
+  (df/load! SPA :project-slugs root/Root)
   (js/setTimeout #(app/mount! SPA root/Root "app" {:initialize-state? false})))

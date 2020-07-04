@@ -50,7 +50,7 @@
       (log/info "Signup success result: " result)
       (df/remove-load-marker! app ::signup)
       (when (:session/valid? session)
-        (r/route-to! "/")
+        (r/route-to! :signup)
         (uism/trigger! app ::session/session :event/signup-success))))
 
   (error-action [{:keys [app]}]

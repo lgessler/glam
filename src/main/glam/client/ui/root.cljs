@@ -21,8 +21,8 @@
   [:div.ui.secondary.pointing.menu
    (conj
      (mapv #(apply r/link %) (if session?
-                             [["/" "Signup"] ["/project/" "Projects"]]
-                             [["/" "Signup"]]))
+                             [[:signup {} "Signup"] [:projects {} "Projects"]]
+                             [[:signup {} "Signup"]]))
      (ui-login login))])
 
 (defsc PageContainer [this {:root/keys [router login] :as props}]

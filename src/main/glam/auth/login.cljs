@@ -61,7 +61,7 @@
         (dom/p "Don't have an account?")
         (dom/a {:onClick (fn []
                            (sm/trigger! this ::session/session :event/toggle-modal {})
-                           (r/route-to! "/"))}
+                           (r/route-to! :signup))}
           "Please sign up!")))))
 
 (def session-join {[:component/id :session] (comp/get-query Session)})
@@ -113,13 +113,13 @@
      (when-not on-start-state?
        (if logged-in?
          [html/fragment
-          (r/link "/settings" "Settings")
+          (r/link :settings {} "Settings")
           [:button.item
            {:on-click #(sm/trigger! this ::session/session :event/logout)}
            (fu/hover-hand nil (str current-user ent/nbsp "Log out"))]]
 
          [html/fragment
-          (r/link "/settings" "Settings")
+          (r/link :settings {} "Settings")
           [:div {:className "item" :key "login" :onClick #(toggle-modal! this)}
            (fu/hover-hand #js{:key "login-label"} "Login")
            (when open?

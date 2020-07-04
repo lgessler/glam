@@ -10,7 +10,9 @@
    {:connect-viz?    true
     :index-explorer? true
     :trace?          true
-    :log-responses?  true}
+    :log-responses?  true
+    :handle-errors?  false
+    :sensitive-keys  [:password]}
 
  :glam.server.neo4j/config
    {:url "neo4j://localhost:7687"

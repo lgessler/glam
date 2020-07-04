@@ -17,12 +17,32 @@
                       (map #(rename-keys % keymap))
                       vec)})
 
+(pc/defresolver project-slugs [{:keys [neo4j]} _]
+  {::pc/output [{:project-slugs [:project/id :project/slug]}]}
+  (try
+    (->> neo4j
+         prj/get-all
+         (map #(rename-keys % keymap))
+         (map #(select-keys % [:project/id :project/slug]))
+         vec
+         (println "OK"))
+    (catch Exception e (log/error (.getMessage e))))
+  {:project-slugs (->> neo4j
+                       prj/get-all
+                       (map #(rename-keys % keymap))
+                       (map #(select-keys % [:project/id :project/slug]))
+                       (map (fn [{:project/keys [id] :as props}]
+                              (assoc props :project/id [:project/id id])))
+                       vec)})
+
 (pc/defresolver get-project-by-slug [{:keys [neo4j]} {:project/keys [slug]}]
-  {::pc/input #{:project/slug}
-   ::pc/output [:project/id]}
-  (->> neo4j
-       (prj/get-id-by-slug {:slug slug})
-       (rename-keys keymap)))
+  {::pc/input  #{:project/slug}
+   ::pc/output [{:project/id [:project/id]}]}
+  (-> neo4j
+      (prj/get-id-by-slug {:slug slug})
+      (rename-keys keymap)
+      ((fn [{:project/keys [id] :as props}]
+         (assoc props :project/id [:project/id id])))))
 
 (pc/defresolver get-project [{:keys [neo4j]} {:project/keys [id]}]
   {::pc/input  #{:project/id}

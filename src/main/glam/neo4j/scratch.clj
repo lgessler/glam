@@ -33,6 +33,17 @@
     )
 
   (do
+
+    (-> s
+        (prj/get-id-by-slug {:slug "test"})
+        (clojure.set/rename-keys {:uuid :project/id :slug :project/slug})
+        ((fn [{:project/keys [id] :as props}]
+           (assoc props :project/id [:project/id id]))))
+
+    )
+
+
+  (do
     (def conn (db/create-in-memory-connection))
     (def conn (db/connect (java.net.URI. "neo4j://localhost:7687") "neo4j" "password"))
 
@@ -46,7 +57,16 @@
     (->> (prj/get-all-ids s)
          (map #(clojure.set/rename-keys % {:uuid :project/id})))
 
-    (prj/get-all s)
+    (->> s
+         prj/get-all
+         (map #(clojure.set/rename-keys % {:uuid :project/id :slug :project/slug}))
+         (map #(select-keys % [:project/id :project/slug]))
+         (map (fn [{:project/keys [id] :as props}]
+                (assoc props :project/id [:project/id id])))
+         vec
+         )
+
+
 
     (def doc1-id (prj/add-document s {:project_uuid prj-id :name "doc1"}))
     (def doc2-id (prj/add-document s {:project_uuid prj-id :name "doc2"}))
@@ -68,9 +88,9 @@
 
     (token/add-span-layer s {:name "span1" :token_layer_uuid token-layer-id})
 
-    )
 
-  (println token/add-span-layer)
+
+    (println token/add-span-layer))
 
   )
 
