@@ -12,7 +12,7 @@
 (defsc ProjectDetail
   [this {:project/keys [id name slug] :as props}]
   {:query         [:project/id :project/name :project/slug
-                   {[:component/id :session] (c/get-query Session)}]
+                   [:component/id :session]]
    :ident         :project/id
    :initial-state {}
    :route-segment (r/route-segment :project)

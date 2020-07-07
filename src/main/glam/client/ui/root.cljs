@@ -9,8 +9,9 @@
     [glam.client.router :as r]
     [glam.client.ui.common :refer [loader]]
     [glam.client.ui.project.core :refer [ProjectRouter]]
+    [glam.client.ui.auth :refer [Session session-join valid-session?]]
     [glam.client.ui.signup :refer [Signup]]
-    [glam.client.ui.auth :refer [ui-login Login Session session-join valid-session?]]))
+    [glam.client.ui.login :refer [ui-login Login]]))
 
 (dr/defrouter TopRouter
   [this {:keys [current-state route-factory route-props]}]
