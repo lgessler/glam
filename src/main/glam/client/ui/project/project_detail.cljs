@@ -12,8 +12,9 @@
   {:query         [:project/id :project/name :project/slug]
    :ident         :project/id
    :initial-state {}
-   :route-segment [:project/id]
-   :will-enter    (fn [app {:project/keys [id] :as route-params}]
+   :route-segment (r/route-segment :project)
+   :will-enter    (fn [app {:keys [id] :as route-params}]
+                    (log/info "Entering: " (pr-str route-params))
                     (when id
                       (dr/route-deferred
                         [:project/id id]
@@ -21,11 +22,11 @@
                                    {:post-mutation        `dr/target-ready
                                     :post-mutation-params {:target [:project/id id]}}))))}
   [:div
-   [:h4 "Project"]
+   [:h4 "Projectzzz"]
    [:div "id: " (pr-str id)]
    [:div "name: " (pr-str name)]
    [:div "slug: " (pr-str slug)]
-   (r/link :projects {} "Projects")])
+   (r/link :projects "Projects")])
 
 (def ui-project-detail (c/factory ProjectDetail))
 

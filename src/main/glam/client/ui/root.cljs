@@ -7,13 +7,16 @@
     [com.fulcrologic.fulcro.ui-state-machines :as sm]
     [glam.client.application :refer [SPA]]
     [glam.client.router :as r]
+    [glam.client.ui.common :refer [loader]]
     [glam.client.ui.project.core :refer [ProjectRouter]]
     [glam.auth.login :refer [ui-login Login Session session-join valid-session?]]
     [glam.auth.signup :refer [Signup]]))
 
 (dr/defrouter TopRouter
   [this {:keys [current-state route-factory route-props]}]
-  {:router-targets [Signup ProjectRouter]})
+  {:router-targets [Signup ProjectRouter]
+   :always-render-body? false}
+  (loader))
 
 (def ui-top-router (c/factory TopRouter))
 
@@ -21,8 +24,8 @@
   [:div.ui.secondary.pointing.menu
    (conj
      (mapv #(apply r/link %) (if session?
-                             [[:signup {} "Signup"] [:projects {} "Projects"]]
-                             [[:signup {} "Signup"]]))
+                             [[:signup "Signup"] [:projects "Projects"]]
+                             [[:signup "Signup"]]))
      (ui-login login))])
 
 (defsc PageContainer [this {:root/keys [router login] :as props}]

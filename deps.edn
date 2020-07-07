@@ -5,7 +5,7 @@
            com.taoensso/timbre                 {:mvn/version "4.10.0"}
            com.taoensso/tufte                  {:mvn/version "2.1.0"}
 
-           com.fulcrologic/fulcro              {:mvn/version "3.2.9"
+           com.fulcrologic/fulcro              {:mvn/version "3.2.11"
                                                 :exclusions  [com.cognitect/transit-cljs
                                                               com.cognitect/transit-js]}
 

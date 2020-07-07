@@ -92,7 +92,7 @@
                                              :account/password-again ""}))
    :form-fields       #{:account/email :account/password :account/password-again}
    :ident             (fn [] signup-ident)
-   :route-segment     [""]
+   :route-segment     (r/route-segment :signup)
    :componentDidMount (fn [this] (comp/transact! this [(clear-signup-form {})]))}
   (let [server-err (:session/server-error-msg (get-session props))
         form-valid? (= :valid (validator props))

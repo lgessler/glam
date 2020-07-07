@@ -38,6 +38,4 @@
                {:actor/login-form      Login
                 :actor/current-session Session})
   (log/info "MOUNTING APP")
-  (log/info "Loading Slugs")
-  (df/load! SPA :project-slugs root/Root)
   (js/setTimeout #(app/mount! SPA root/Root "app" {:initialize-state? false})))
