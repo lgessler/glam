@@ -9,7 +9,7 @@
 
 (defn with-user
   [f]
-  (let [uuid (user/create session {:name "luke" :password_hash "secret"})]
+  (let [uuid (user/create session {:name "luke" :email "a@b.com" :password_hash "secret"})]
     (f)
     (user/delete session {:uuid uuid})))
 

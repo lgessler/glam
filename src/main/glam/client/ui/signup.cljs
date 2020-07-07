@@ -1,4 +1,4 @@
-(ns glam.auth.signup
+(ns glam.client.ui.signup
   (:require
     [clojure.string :as str]
     [clojure.pprint :refer [pprint]]
@@ -11,9 +11,9 @@
     [com.fulcrologic.fulcro.ui-state-machines :as uism]
     [com.fulcrologic.guardrails.core :refer [>defn => | ?]]
     [dv.fulcro-util :as fu]
-    [glam.auth.session :as session]
+    [glam.models.session :as session]
     [glam.client.router :as r]
-    [glam.auth.login :refer [session-join Session get-session]]
+    [glam.client.ui.auth :refer [session-join Session get-session]]
     [sablono.util :as su]
     [taoensso.timbre :as log]))
 

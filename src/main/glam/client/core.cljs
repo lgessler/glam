@@ -6,8 +6,8 @@
     [glam.client.ui.root :as root]
     [glam.client.application :refer [SPA]]
     [glam.client.router :as router]
-    [glam.auth.login :refer [Login Session]]
-    [glam.auth.session :as session]
+    [glam.auth.auth :refer [Login Session]]
+    [glam.models.session :as session]
     [shadow.resource :as rc]
     [taoensso.timbre :as log]
     [com.fulcrologic.fulcro.data-fetch :as df]))

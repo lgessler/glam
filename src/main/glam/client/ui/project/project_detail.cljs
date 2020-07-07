@@ -3,6 +3,7 @@
             [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]
             [com.fulcrologic.fulcro.data-fetch :as df]
             [com.fulcrologic.fulcro.application :as app]
+            [com.fulcrologic.fulcro.ui-state-machines :as sm]
             [glam.client.router :as r]
             [taoensso.timbre :as log]))
 
@@ -23,6 +24,7 @@
                                     :post-mutation-params {:target [:project/id id]}}))))}
   [:div
    [:h4 "Projectzzz"]
+   [:div "props" (pr-str props)]
    [:div "id: " (pr-str id)]
    [:div "name: " (pr-str name)]
    [:div "slug: " (pr-str slug)]

@@ -30,12 +30,6 @@
            ring/ring-defaults                  {:mvn/version "0.3.2"}
            bk/ring-gzip                        {:mvn/version "0.3.0"}
 
-           ;; Crux
-           juxt/crux-core                      {:mvn/version "20.05-1.8.4-alpha"}
-           juxt/crux-rocksdb                   {:mvn/version "20.05-1.8.4-alpha"}
-           juxt/crux-metrics                   {:mvn/version "20.05-1.8.4-alpha"}
-           ;juxt/crux-http-server               {:mvn/version "20.05-1.8.4-alpha"}
-
            ;; glam.neo4j
            gorillalabs/neo4j-clj               {:mvn/version "4.0.1"}
            ;; missing dep from neo4j-clj

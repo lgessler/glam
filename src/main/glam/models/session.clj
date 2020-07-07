@@ -1,11 +1,12 @@
-(ns glam.auth.session
+(ns glam.models.session
   (:require
     [clojure.spec.alpha :as s]
     [com.fulcrologic.fulcro.server.api-middleware :as fmw]
     [com.fulcrologic.guardrails.core :refer [>defn => | ?]]
     [com.wsscode.pathom.connect :as pc :refer [defresolver defmutation]]
     [dv.fulcro-util :as fu]
-    [glam.auth.user :as user]
+    [glam.models.user :as user]
+    [glam.neo4j.user :as neo-user]
     [taoensso.timbre :as log]))
 
 (defn augment-session-resp
@@ -24,39 +25,41 @@
            (assoc resp :session new-session)))))))
 
 (pc/defmutation signup
-  [env {:keys [email password]}]
+  [{:keys [neo4j] :as env} {:keys [email password]}]
   {::pc/sym 'glam.auth.signup/signup}
-  (let [id (fu/uuid)]
-    (if-let [user (user/get-user-by-email email)]
-      (augment-session-resp env
-        {:session/valid? false :user/name nil :session/server-error-msg "Problem signing up."})
-      (do (log/info "doing signup")
-          (log/info "inserting user: " (log/spy id) (log/spy email) (log/spy password))
-          (user/insert-user id email password)
-          (augment-session-resp env {:session/valid? true :session/server-error-msg nil :user/name email})))))
+  (if-let [user-id (neo-user/get-id-by-email neo4j {:email email})]
+    (augment-session-resp env {:session/valid?           false
+                               :user/name                nil
+                               :session/server-error-msg "Problem signing up."})
+    (do (log/info "doing signup")
+        (log/info "inserting user: " email)
+        (neo-user/create neo4j {:name          "TODO:REPLACE"
+                                :email         email
+                                :password_hash (user/hash-password password)})
+        (augment-session-resp env {:session/valid?           true
+                                   :session/server-error-msg nil
+                                   :user/name                email}))))
 
 ;; todo use a protocol to support pluggable auth
-(defmutation login [env {:keys [username password]}]
+(defmutation login [{:keys [neo4j] :as env} {:keys [username password]}]
   {::pc/output [:session/valid? :user/name]}
   (do
     (log/info "Authenticating" username)
-    (if-let [{hashed-pw :user/password :as user} (user/get-user-by-email username)]
-      (do (log/info "User from db: " (dissoc user :user/password))
-          (if (user/verify-password password hashed-pw)
-            (augment-session-resp env {:session/valid? true :user/name username})
-            (do
-              (log/error "Invalid credentials supplied for" username)
-              (fu/server-error "Invalid credentials"))))
-      (fu/server-error "Invalid credentials"))))
+    (let [user-id (neo-user/get-id-by-email neo4j {:email username})]
+      (if-let [{hashed-pw :user/password :as user} (user/change-keys (neo-user/get-props neo4j {:uuid user-id}))]
+        (do (log/info "User from db: " (dissoc user :user/password))
+            (if (user/verify-password password hashed-pw)
+              (augment-session-resp env {:session/valid? true :user/name username})
+              (do
+                (log/error "Invalid credentials supplied for" username)
+                (fu/server-error "Invalid credentials"))))
+        (fu/server-error "Invalid credentials")))))
 
 (defmutation logout [env params]
   {::pc/output [:session/valid?]}
   (log/info "in logout")
   (augment-session-resp env
-    {:session/valid? false :session/server-error-msg nil :user/name ""}))
-
-(defn make-session [valid? username]
-  {:session/valid? valid? :user/name username})
+                        {:session/valid? false :session/server-error-msg nil :user/name ""}))
 
 (defresolver current-session-resolver [env _]
   {::pc/output [{::current-session [:session/valid? :user/name]}]}

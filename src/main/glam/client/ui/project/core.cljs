@@ -14,7 +14,7 @@
 ;; router for all routes under "/project/" is contained in a container component, Projects
 (defrouter ProjectRouter
   [this {:keys [current-state route-factory route-props]}]
-  {:route-segment  (r/route-segment :project-router)
+  {:route-segment  (r/router-segment :project-router)
    :router-targets [ProjectsPage ProjectDetail]
    :always-render-body? false}
   (loader))

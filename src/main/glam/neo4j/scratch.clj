@@ -66,6 +66,11 @@
          vec
          )
 
+    (user/create s {:name "a" :email "a" :password_hash "qwe"})
+
+    (user/get-id-by-name s {:name "a"})
+
+
 
 
     (def doc1-id (prj/add-document s {:project_uuid prj-id :name "doc1"}))

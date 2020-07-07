@@ -1,4 +1,4 @@
-(ns glam.auth.session
+(ns glam.models.session
   (:require
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]

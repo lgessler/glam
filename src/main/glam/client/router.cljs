@@ -34,35 +34,33 @@
         (assoc prop-map :path path-str))
       grouped)))
 
-(>defn url-path->vec
-  "Return empty vector on no match, split url path on /"
-  [path]
-  [string? => (s/coll-of string? :kind vector?)]
-  (let [s (->> (str/split path "/")
-               (remove empty?)
-               vec)]
-    (if (seq s) s [])))
+;; routes ----------------------------------------------------------------------------
+;; every routed component will munch its segment off of this using `route-segment`.
+;; While the entire segment is listed for items that are nested below the top router,
+;; it in fact will only use the last item in the sequence as its segment, so currently
+;; components may not use a segment longer than one item, and the items before the last
+;; item in the :segment vectors here are just for documentation.
 
 (defn route-segment [name]
   (if-let [segment (some-> routes-by-name name :segment last vector)]
     segment
     (throw (js/Error. (str "No matching fulcro segment for route: " (pr-str name))))))
 
-(defn route-href [id]
-  (let [conf (id routes-by-name)]
-    (if-let [params (:params conf)]
-      (rfe/href id params)
-      (rfe/href id))))
+(defn router-segment
+  [name]
+  (case name
+    :project-router ["project"]
+    (ex-info "unknown router: " name)))
 
-;; routes
 (def routes
   [["/"
     {:name    :signup
      :segment [""]}]
 
-   ["/project"
-    {:name    :project-router
-     :segment ["project"]}]
+   ["/settings"
+    {:name :settings
+     :segment ["settings"]}]
+
    ["/project/"
     {:name    :projects
      :segment ["project" ""]}]
@@ -73,9 +71,12 @@
 
    ])
 
+
+
 (def router (rf/router routes {:data {:coercion rss/coercion}}))
 (def routes-by-name (make-routes-by-name router))
 
+;; keep track of where we are at the moment
 (def current-fulcro-route* (atom []))
 (defn current-fulcro-route [] @current-fulcro-route*)
 
@@ -95,8 +96,8 @@
         (log/info "No fulcro route matched the current URL, changing to the default route.")
         (route-to! :signup))
 
-      ;; route has redirect
       (if-let [{:keys [route params]} (get-in m [:data :redirect-to])]
+        ;; route has redirect
         (let [params (params)]
           (do (log/info "redirecting to: " route " with params " params)
               (if (> @redirect-loop-count max-redirect-loop-count)
@@ -107,6 +108,7 @@
                   (vswap! redirect-loop-count inc)
                   (js/setTimeout #(rfe/replace-state route params))))))
 
+        ;;
         (let [path (:path m)
               segments (->> (clojure.string/split path "/" -1) (drop 1) vec)
               extended-segments (conj segments "")]

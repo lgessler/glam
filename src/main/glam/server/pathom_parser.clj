@@ -2,12 +2,11 @@
   (:require
     [com.wsscode.pathom.connect :as pc]
     [com.wsscode.pathom.core :as p]
-    [dv.crux-node :refer [crux-node]]
     [dv.pathom :refer [build-parser]]
     [glam.server.neo4j :refer [neo4j-conn]]
     [glam.models.project :refer [project-resolvers]]
-    [glam.auth.session :as session]
-    [glam.auth.user :as user]
+    [glam.models.session :as session]
+    [glam.models.user :as user]
     [glam.server.config :refer [config]]
     [neo4j-clj.core :as neo4j]
     [dv.pathom :as dp]
@@ -36,10 +35,11 @@
 
 
 (def env-additions
-  (fn [env] {:crux-node    crux-node
-             :neo4j        (neo4j/get-session neo4j-conn)
-             :config       config
-             :current-user (user/get-current-user env)}))
+  (fn [env]
+    (let [session (neo4j/get-session neo4j-conn)]
+      {:neo4j        session
+       :config       config
+       :current-user (user/get-current-user (assoc env :neo4j session))})))
 
 (def parser
   (let [{:keys [trace? index-explorer?

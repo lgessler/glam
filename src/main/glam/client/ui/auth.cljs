@@ -1,4 +1,4 @@
-(ns glam.auth.login
+(ns glam.client.ui.auth
   (:require
     ["react" :as react]
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
@@ -14,7 +14,7 @@
     [sablono.core :as html :refer-macros [html]]
     [dv.fulcro-util :as fu]
     [dv.cljs-emotion :refer [defstyled]]
-    [glam.auth.session :as session]
+    [glam.models.session :as session]
     [glam.client.router :as r]
     [taoensso.timbre :as log]))
 

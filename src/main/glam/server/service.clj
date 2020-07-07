@@ -5,7 +5,6 @@
     [clojure.string :as string]
     [com.fulcrologic.fulcro.server.api-middleware :refer [handle-api-request]]
     [com.fulcrologic.guardrails.core :refer [>defn => | ?]]
-    [dv.crux-node :refer [crux-node]]
     [dv.fulcro-util :as fu]
     [hiccup.page :refer [html5]]
     [io.pedestal.http :as http]
