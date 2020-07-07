@@ -27,7 +27,7 @@
 (defn login [{::sm/keys [event-data] :as env}]
   (-> env
       (clear)
-      (sm/trigger-remote-mutation :actor/login-form 'glam.auth.session/login
+      (sm/trigger-remote-mutation :actor/login-form 'glam.models.session/login
                                   {:username        (:username event-data)
                                    :password        (:password event-data)
                                    ::m/returning    (sm/actor-class env :actor/current-session)
@@ -39,7 +39,7 @@
   "Called on app boot and to validate logging in. See if we have a session from the backend."
   [env error-message chroute?]
   (let [success? (sm/alias-value env :session-valid?)]
-    (log/info "PROCESS SESSION RESULT , CHROUTE? " chroute?)
+    (log/info "PROCESS SESSION RESULT , CHROUTE? " chroute? ", SUCCESS? " success?)
     (cond
       (and chroute? success?)
       (r/route-to! :signup)
@@ -75,7 +75,7 @@
     :error          [:actor/login-form :ui/error]
     :modal-open?    [:actor/login-form :ui/open?]
     :session-valid? [:actor/current-session :session/valid?]
-    :current-user   [:actor/current-session :user/name]}
+    :current-user   [:actor/current-session :user/email]}
 
    ::sm/states
    {:initial

@@ -21,14 +21,16 @@
 (defsc Session
   "Session representation. Used primarily for server queries.
   On-screen representation happens in Login component."
-  [_ {:keys [:session/valid? :user/name :session/server-error-msg]}]
-  {:query         [:session/valid? :session/server-error-msg :user/name :ui/loading?]
+  [_ {:keys [:session/valid? :user/email :session/server-error-msg]}]
+  {:query         [:session/valid? :session/server-error-msg :user/email :ui/loading?]
    :ident         (fn [] [:component/id :session])
    :pre-merge     (fn [{:keys [data-tree]}]
                     (merge
-                      {:session/valid?           false :user/name ""
-                       :session/server-error-msg nil} data-tree))
-   :initial-state {:session/valid? false :user/name "" :session/server-error-msg nil}})
+                      {:session/valid?           false
+                       :user/email               ""
+                       :session/server-error-msg nil}
+                      data-tree))
+   :initial-state {:session/valid? false :user/email "" :session/server-error-msg nil}})
 
 (defstyled ui-floating-menu :div
   {:position "absolute !important"
@@ -40,29 +42,29 @@
 (defn ui-login-form
   [this {:keys [loading? error email password form-valid?]}]
   (dom/div nil
-    (dom/h3 :.ui.header "Login")
-    (dom/form :.ui.form
-      {:classes  [(when (seq error) "error")]
-       :onSubmit (fu/prevent-default
-                   #(when form-valid?
-                      (sm/trigger! this ::session/session :event/login {:username email :password password})))}
-      (fu/ui-email this :user/email email identity :autofocus? true)
-      (fu/ui-password-field
-        password
-        #(comp/set-state! this {:password (evt/target-value %)}))
+           (dom/h3 :.ui.header "Login")
+           (dom/form :.ui.form
+                     {:classes  [(when (seq error) "error")]
+                      :onSubmit (fu/prevent-default
+                                  #(when form-valid?
+                                     (sm/trigger! this ::session/session :event/login {:username email :password password})))}
+                     (fu/ui-email this :user/email email identity :autofocus? true)
+                     (fu/ui-password-field
+                       password
+                       #(comp/set-state! this {:password (evt/target-value %)}))
 
-      (dom/div :.ui.error.message error)
-      (dom/div :.ui.field
-        (dom/button :.ui.button
-          {:type     "submit"
-           :disabled (not form-valid?)
-           :classes  [(when loading? "loading")]} "Login"))
-      (dom/div :.ui.message
-        (dom/p "Don't have an account?")
-        (dom/a {:onClick (fn []
-                           (sm/trigger! this ::session/session :event/toggle-modal {})
-                           (r/route-to! :signup))}
-          "Please sign up!")))))
+                     (dom/div :.ui.error.message error)
+                     (dom/div :.ui.field
+                              (dom/button :.ui.button
+                                          {:type     "submit"
+                                           :disabled (not form-valid?)
+                                           :classes  [(when loading? "loading")]} "Login"))
+                     (dom/div :.ui.message
+                              (dom/p "Don't have an account?")
+                              (dom/a {:onClick (fn []
+                                                 (sm/trigger! this ::session/session :event/toggle-modal {})
+                                                 (r/route-to! :signup))}
+                                     "Please sign up!")))))
 
 (def session-join {[:component/id :session] (comp/get-query Session)})
 
@@ -83,16 +85,16 @@
    :ident              (fn [] [:component/id :login])
    :componentDidMount  (fn [this]
                          (events/listen js/document (.-MOUSEUP EventType)
-                           (fn [e]
-                             ;(log/info "GOT MOUSE UP document" e)
-                             (when (:ui/open? (comp/props this))
-                               (log/info "closing modal")
-                               (close-modal! this))))
+                                        (fn [e]
+                                          ;(log/info "GOT MOUSE UP document" e)
+                                          (when (:ui/open? (comp/props this))
+                                            (log/info "closing modal")
+                                            (close-modal! this))))
 
                          (when-let [dom-node (g/get this "el")]
                            (events/listen dom-node (.-MOUSEUP EventType) (fu/stop-propagation)
-                             ; (fn [e] (log/info "GOT MOUSE UP login " e) (.stopPropagation e))
-                             )))
+                                          ; (fn [e] (log/info "GOT MOUSE UP login " e) (.stopPropagation e))
+                                          )))
 
    :componentDidUpdate (fn [this pprops _]
                          ;; clear password input field after logging in.
@@ -100,14 +102,14 @@
                                {prev-session-valid? :session/valid?} (get pprops [:component/id :session])]
                            (when (and curr-session-valid? (not prev-session-valid?))
                              (comp/set-state! this {:password ""}))))}
-  (let [current-state   (sm/get-active-state this ::session/session)
-        session         (get-session props)
-        {current-user :user/name session-valid? :session/valid?} session
+  (let [current-state (sm/get-active-state this ::session/session)
+        session (get-session props)
+        {current-user :user/email session-valid? :session/valid?} session
         on-start-state? (= :initial current-state)
-        loading?        (= :state/checking-session current-state)
-        logged-in?      session-valid?
-        password        (or (comp/get-state this :password) "") ; c.l. state for security
-        form-valid?     (and (fu/valid-email? email) (fu/valid-password? password))]
+        loading? (= :state/checking-session current-state)
+        logged-in? session-valid?
+        password (or (comp/get-state this :password) "")    ; c.l. state for security
+        form-valid? (and (fu/valid-email? email) (fu/valid-password? password))]
     [:.right.menu {:ref (fn [r] (g/set this "el" r))}
 
      (when-not on-start-state?
@@ -129,7 +131,9 @@
                 ;; Stop bubbling (would trigger the menu toggle)
                 :onClick   evt/stop-propagation!}
                (ui-login-form this {:error       error
-                                    :email       email :password password
-                                    :form-valid? form-valid? :loading? loading?})))]]))]))
+                                    :email       email
+                                    :password    password
+                                    :form-valid? form-valid?
+                                    :loading?    loading?})))]]))]))
 
 (def ui-login (comp/factory Login {:keyfn (constantly "login-menu")}))

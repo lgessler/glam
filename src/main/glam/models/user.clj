@@ -35,19 +35,15 @@
       (select-keys [:user/email])))
 
 (defn get-current-user
-  "Reads username (email) from the ring session"
+  "Reads username (email) from the ring session and returns the neo4j ID"
   [{:keys [neo4j] :ring/keys [request] :as env}]
   (when-let [session (:session request)]
     (when (:session/valid? session)
-      (if-let [email (:user/name session)]
+      (if-let [email (:user/email session)]
         (do (log/info "HAVE A USER: " email)
             (user/get-id-by-email neo4j {:email email}))
         (do (log/info "no user")
             nil)))))
-
-(pc/defresolver current-user-id-resolver [env _]
-  {::pc/output [:app/current-user]}
-  {:app/current-user (get-current-user env)})
 
 (pc/defresolver all-users-resolver [{:keys [neo4j]} _]
   {::pc/output [{:all-users [:user/id]}]}
@@ -56,4 +52,4 @@
                   (rename-keys keymap)
                   (select-keys [:user/id]))})
 
-(def resolvers [user-resolver current-user-id-resolver all-users-resolver])
+(def resolvers [user-resolver all-users-resolver])
