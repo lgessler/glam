@@ -6,7 +6,8 @@
     [glam.client.ui.root :as root]
     [glam.client.application :refer [SPA]]
     [glam.client.router :as router]
-    [glam.client.ui.auth :refer [Login Session]]
+    [glam.client.ui.login :refer [NavbarLogin]]
+    [glam.models.session :refer [Session]]
     [glam.models.session :as session]
     [shadow.resource :as rc]
     [taoensso.timbre :as log]
@@ -36,7 +37,7 @@
   (router/init! SPA)
   (log/info "Starting session machine.")
   (uism/begin! SPA session/session-machine ::session/session
-               {:actor/login-form      Login
+               {:actor/login-form      NavbarLogin
                 :actor/current-session Session})
   (log/info "MOUNTING APP")
   (js/setTimeout #(app/mount! SPA root/Root "app" {:initialize-state? false}))

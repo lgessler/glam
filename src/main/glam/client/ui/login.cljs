@@ -6,7 +6,7 @@
             [goog.object :as g]
             [goog.events :as events :refer [EventType]]
             [taoensso.timbre :as log]
-            [glam.client.ui.auth :refer [session-join get-session]]
+            [glam.models.session :refer [session-join get-session]]
             [glam.client.router :as r]
             [glam.models.session :as session]
             [dv.cljs-emotion :refer [defstyled]]
@@ -44,16 +44,10 @@
                               (dom/button :.ui.button
                                           {:type     "submit"
                                            :disabled (not form-valid?)
-                                           :classes  [(when loading? "loading")]} "Login"))
-                     (dom/div :.ui.message
-                              (dom/p "Don't have an account?")
-                              (dom/a {:onClick (fn []
-                                                 (sm/trigger! this ::session/session :event/toggle-modal {})
-                                                 (r/route-to! :signup))}
-                                     "Please sign up!")))))
+                                           :classes  [(when loading? "loading")]} "Login")))))
 
-(defsc Login [this {:user/keys [email]
-                    :ui/keys   [error open?] :as props}]
+(defsc NavbarLogin [this {:user/keys [email]
+                          :ui/keys   [error open?] :as props}]
   {:query              [:ui/open? :ui/error :user/email
                         session-join
                         [::sm/asm-id :glam.client.ui.root/TopRouter]
@@ -113,4 +107,34 @@
                                     :form-valid? form-valid?
                                     :loading?    loading?})))]]))]))
 
-(def ui-login (comp/factory Login {:keyfn (constantly "login-menu")}))
+(def ui-navbar-login (comp/factory NavbarLogin {:keyfn (constantly "login-menu")}))
+
+
+
+(defsc Login [this {:user/keys [email]
+                    :ui/keys   [error open?] :as props}]
+  {:query              [:ui/open? :ui/error :user/email
+                        session-join
+                        [::sm/asm-id ::session/session]]
+   :initial-state      {:user/email "" :ui/error ""}
+   :ident              (fn [] [:component/id :login])
+   :componentDidUpdate (fn [this pprops _]
+                         ;; clear password input field after logging in.
+                         (let [{curr-session-valid? :session/valid?} (get (comp/props this) [:component/id :session])
+                               {prev-session-valid? :session/valid?} (get pprops [:component/id :session])]
+                           (when (and curr-session-valid? (not prev-session-valid?))
+                             (comp/set-state! this {:password ""}))))}
+  (let [current-state (sm/get-active-state this ::session/session)
+        session (get-session props)
+        {session-valid? :session/valid?} session
+        loading? (= :state/checking-session current-state)
+        password (or (comp/get-state this :password) "")    ; c.l. state for security
+        form-valid? (and (fu/valid-email? email) (fu/valid-password? password))]
+    (when-not session-valid?
+      (ui-login-form this {:error       error
+                           :email       email
+                           :password    password
+                           :form-valid? form-valid?
+                           :loading?    loading?}))))
+
+(def ui-login (comp/factory Login))

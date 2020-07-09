@@ -9,13 +9,13 @@
     [glam.client.router :as r]
     [glam.client.ui.common :refer [loader]]
     [glam.client.ui.project.core :refer [ProjectRouter]]
-    [glam.client.ui.auth :refer [Session session-join valid-session?]]
-    [glam.client.ui.signup :refer [Signup]]
-    [glam.client.ui.login :refer [ui-login Login]]))
+    [glam.models.session :refer [Session session-join valid-session?]]
+    [glam.client.ui.home :refer [Home]]
+    [glam.client.ui.login :refer [ui-navbar-login NavbarLogin Login]]))
 
 (dr/defrouter TopRouter
   [this {:keys [current-state route-factory route-props]}]
-  {:router-targets [Signup ProjectRouter]
+  {:router-targets [Home ProjectRouter]
    :always-render-body? false}
   (loader))
 
@@ -25,19 +25,18 @@
   [:div.ui.secondary.pointing.menu
    (conj
      (mapv #(apply r/link %) (if session?
-                             [[:signup "Signup"] [:projects "Projects"]]
-                             [[:signup "Signup"]]))
-     (ui-login login))])
+                             [[:home "Login"] [:projects "Projects"]]
+                             [[:home "Login"]]))
+     (ui-navbar-login login))])
 
 (defsc PageContainer [this {:root/keys [router login] :as props}]
   {:query         [{:root/router (c/get-query TopRouter)}
                    [::sm/asm-id ::TopRouter]
                    session-join
-                   {:root/login (c/get-query Login)}]
+                   {:root/login (c/get-query NavbarLogin)}]
    :ident         (fn [] [:component/id :page-container])
    :initial-state (fn [_] {:root/router             (c/get-initial-state TopRouter {})
-                           :root/login              (c/get-initial-state Login {})
-                           :root/signup             (c/get-initial-state Signup {})
+                           :root/login              (c/get-initial-state NavbarLogin {})
                            [:component/id :session] (c/get-initial-state Session {})})}
   (let [session? (valid-session? props)]
     [:.ui.container

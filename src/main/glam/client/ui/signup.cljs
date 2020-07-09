@@ -13,9 +13,10 @@
     [dv.fulcro-util :as fu]
     [glam.models.session :as session]
     [glam.client.router :as r]
-    [glam.client.ui.auth :refer [session-join Session get-session]]
+    [glam.models.session :refer [session-join Session get-session]]
     [sablono.util :as su]
-    [taoensso.timbre :as log]))
+    [taoensso.timbre :as log]
+    [com.fulcrologic.fulcro.components :as c]))
 
 (def signup-ident [:component/id :signup])
 (declare Signup)
@@ -50,7 +51,7 @@
       (log/info "Signup success result: " result)
       (df/remove-load-marker! app ::signup)
       (when (:session/valid? session)
-        (r/route-to! :signup)
+        (r/route-to! :home)
         (uism/trigger! app ::session/session :event/signup-success))))
 
   (error-action [{:keys [app]}]
@@ -92,7 +93,6 @@
                                              :account/password-again ""}))
    :form-fields       #{:account/email :account/password :account/password-again}
    :ident             (fn [] signup-ident)
-   :route-segment     (r/route-segment :signup)
    :componentDidMount (fn [this] (comp/transact! this [(clear-signup-form {})]))}
   (let [server-err (:session/server-error-msg (get-session props))
         form-valid? (= :valid (validator props))
@@ -119,3 +119,5 @@
         :tab-index 4
         :class     (str "ui primary button" (when saving? " loading"))
         :disabled  (not form-valid?)} "Sign Up"]]]))
+
+(def ui-signup (c/factory Signup))

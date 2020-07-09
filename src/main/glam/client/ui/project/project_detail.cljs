@@ -5,7 +5,7 @@
             [com.fulcrologic.fulcro.application :as app]
             [com.fulcrologic.fulcro.ui-state-machines :as sm]
             [glam.client.router :as r]
-            [glam.client.ui.auth :as auth :refer [Session]]
+            [glam.models.session :as session :refer [Session]]
             [taoensso.timbre :as log]))
 
 
@@ -27,7 +27,7 @@
   [:div
    [:h4 "Projectzzz"]
    [:div (pr-str props)]
-   [:div (pr-str (auth/get-session props))]
+   [:div (pr-str (session/get-session props))]
    [:div "props" (pr-str props)]
    [:div "id: " (pr-str id)]
    [:div "name: " (pr-str name)]

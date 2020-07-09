@@ -10,6 +10,25 @@
     [glam.client.router :as r]
     [taoensso.timbre :as log]))
 
+;; query-only defsc for normalization
+(defsc Session
+  [_ {:keys [:session/valid? :user/email :session/server-error-msg]}]
+  {:query         [:session/valid? :session/server-error-msg :user/email :ui/loading?]
+   :ident         (fn [] [:component/id :session])
+   :pre-merge     (fn [{:keys [data-tree]}]
+                    (merge
+                      {:session/valid?           false
+                       :user/email               ""
+                       :session/server-error-msg nil}
+                      data-tree))
+   :initial-state {:session/valid? false :user/email "" :session/server-error-msg nil}})
+
+(def session-join {[:component/id :session] (comp/get-query Session)})
+
+(defn get-session [props] (get props [:component/id :session]))
+
+(defn valid-session? [props] (:session/valid? (get props [:component/id :session])))
+
 (defn clear [env]
   (sm/assoc-aliased env :error ""))
 
@@ -21,7 +40,7 @@
             (sm/assoc-aliased :username "" :session-valid? false :current-user "")
             (sm/trigger-remote-mutation :actor/login-form `logout {})
             (sm/activate :state/logged-out))]
-    (r/route-to! :signup)
+    (r/route-to! :home)
     env))
 
 (defn login [{::sm/keys [event-data] :as env}]
@@ -42,9 +61,9 @@
     (log/info "PROCESS SESSION RESULT , CHROUTE? " chroute? ", SUCCESS? " success?)
     (cond
       (and chroute? success?)
-      (r/route-to! :signup)
+      (r/route-to! :projects)
       (not success?)
-      (r/route-to! :signup))
+      (r/route-to! :home))
     (cond-> (clear env)
             success? (->
                        (sm/assoc-aliased :modal-open? false)

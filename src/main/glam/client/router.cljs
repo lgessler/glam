@@ -54,11 +54,11 @@
 
 (def routes
   [["/"
-    {:name    :signup
+    {:name    :home
      :segment [""]}]
 
    ["/settings"
-    {:name :settings
+    {:name    :settings
      :segment ["settings"]}]
 
    ["/project/"
@@ -94,7 +94,7 @@
       ;; unknown page, redirect to root
       (do
         (log/info "No fulcro route matched the current URL, changing to the default route.")
-        (route-to! :signup))
+        (route-to! :home))
 
       (if-let [{:keys [route params]} (get-in m [:data :redirect-to])]
         ;; route has redirect
@@ -181,10 +181,10 @@
        (rfe/push-state name params)))))
 
 (defn change-route-to-default! [this]
-  (route-to! :signup))
+  (route-to! :home))
 
 (defn change-route-after-signout! [this]
-  (route-to! :signup))
+  (route-to! :home))
 
 (defn link
   ([route-name body]
