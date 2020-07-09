@@ -7,8 +7,7 @@
 
 (defsc Home [this props]
   {:query         [{:home/signup (c/get-query Signup)}
-                   {:home/login (c/get-query Login)}
-                   ]
+                   {:home/login (c/get-query Login)}]
    :ident         (fn [_] [:component/id :home])
    :initial-state (fn [_] {:home/signup (c/get-initial-state Signup)
                            :home/login  (c/get-initial-state Login)})

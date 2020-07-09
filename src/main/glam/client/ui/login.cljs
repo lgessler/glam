@@ -91,7 +91,7 @@
            {:on-click #(sm/trigger! this ::session/session :event/logout)}
            (fu/hover-hand nil (str current-user ent/nbsp "Log out"))]]
 
-         [html/fragment
+         #_[html/fragment
           #_(r/link :settings {} "Settings")
           [:div {:className "item" :key "login" :onClick #(toggle-modal! this)}
            (fu/hover-hand #js{:key "login-label"} "Login")

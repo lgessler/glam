@@ -15,7 +15,7 @@
 
 (dr/defrouter TopRouter
   [this {:keys [current-state route-factory route-props]}]
-  {:router-targets [Home ProjectRouter]
+  {:router-targets      [Home ProjectRouter]
    :always-render-body? false}
   (loader))
 
@@ -25,8 +25,8 @@
   [:div.ui.secondary.pointing.menu
    (conj
      (mapv #(apply r/link %) (if session?
-                             [[:home "Login"] [:projects "Projects"]]
-                             [[:home "Login"]]))
+                               [[:projects "Projects"]]
+                               [[:home "Login"]]))
      (ui-navbar-login login))])
 
 (defsc PageContainer [this {:root/keys [router login] :as props}]
