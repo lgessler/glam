@@ -58,7 +58,7 @@
      :segment [""]}]
 
    ["/settings"
-    {:name    :settings
+    {:name    :user-settings
      :segment ["settings"]}]
 
    ["/project/"
@@ -179,6 +179,21 @@
        (log/info "Changing route to : " route)
        (log/info "push state : " name " params: " params)
        (rfe/push-state name params)))))
+
+(defn redirect-to!
+  "Like route-to!, but doesn't leave the current route in history"
+  ([route-key]
+   (let [{:keys [name] :as route} (get routes-by-name route-key)]
+     (when-not (route=url? route-key {})
+       (log/info "Redirecting to: " route)
+       (rfe/replace-state name))))
+
+  ([route-key params]
+   (let [{:keys [name] :as route} (get routes-by-name route-key)]
+     (when-not (route=url? route-key params)
+       (log/info "Redirecting to : " route)
+       (log/info "push state : " name " params: " params)
+       (rfe/replace-state name params)))))
 
 (defn change-route-to-default! [this]
   (route-to! :home))

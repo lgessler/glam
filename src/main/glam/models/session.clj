@@ -26,14 +26,14 @@
 
 (pc/defmutation signup
   [{:keys [neo4j] :as env} {:keys [email password]}]
-  {::pc/sym 'glam.auth.signup/signup}
+  {::pc/sym 'glam.models.session/signup}
   (if-let [user-id (neo-user/get-id-by-email neo4j {:email email})]
     (augment-session-resp env {:session/valid?           false
                                :user/email               email
                                :session/server-error-msg "Problem signing up."})
     (do (log/info "doing signup")
         (log/info "inserting user: " email)
-        (neo-user/create neo4j {:name          "TODO:REPLACE"
+        (neo-user/create neo4j {:name          email
                                 :email         email
                                 :password_hash (user/hash-password password)})
         (augment-session-resp env {:session/valid?           true

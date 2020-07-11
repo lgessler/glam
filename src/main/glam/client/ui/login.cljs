@@ -17,7 +17,6 @@
 (defn toggle-modal! [this] (sm/trigger! this ::session/session :event/toggle-modal))
 (defn close-modal! [this] (sm/trigger! this ::session/session :event/close-modal))
 
-
 (defstyled ui-floating-menu :div
   {:position "absolute !important"
    :z-index  1000
@@ -86,7 +85,7 @@
      (when-not on-start-state?
        (if logged-in?
          [html/fragment
-          #_(r/link :settings {} "Settings")
+          (r/link :user-settings "Settings")
           [:button.item
            {:on-click #(sm/trigger! this ::session/session :event/logout)}
            (fu/hover-hand nil (str current-user ent/nbsp "Log out"))]]
@@ -108,8 +107,6 @@
                                     :loading?    loading?})))]]))]))
 
 (def ui-navbar-login (comp/factory NavbarLogin {:keyfn (constantly "login-menu")}))
-
-
 
 (defsc Login [this {:user/keys [email]
                     :ui/keys   [error open?] :as props}]

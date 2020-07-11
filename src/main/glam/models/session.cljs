@@ -8,7 +8,10 @@
     [dv.fulcro-util :as fu]
     [glam.client.application :refer [SPA]]
     [glam.client.router :as r]
-    [taoensso.timbre :as log]))
+    [taoensso.timbre :as log]
+    [com.fulcrologic.fulcro.algorithms.form-state :as fs]
+    [com.fulcrologic.fulcro.algorithms.denormalize :as fdn]
+    [com.fulcrologic.fulcro.data-fetch :as df]))
 
 ;; query-only defsc for normalization
 (defsc Session
@@ -128,3 +131,33 @@
                          :event/login          {::sm/target-states #{:state/checking-session}
                                                 ::sm/handler       login}})}}})
 
+;; signup
+(def signup-ident [:component/id :signup])
+
+(defmutation signup [_]
+  (action [{:keys [state]}]
+          (log/info "Starting signup mutation")
+          (swap! state
+                 (fn [s]
+                   (-> s
+                       (fs/mark-complete* signup-ident)
+                       (assoc-in [df/marker-table ::signup] {:status :loading})))))
+
+  (ok-action [{:keys [app state result]}]
+             (let [state @state
+                   session (fdn/db->tree (comp/get-query Session) [:component/id :session] state)]
+               (log/info "Signup success result: " result)
+               (df/remove-load-marker! app ::signup)
+               (when (:session/valid? session)
+                 (r/route-to! :projects)
+                 (sm/trigger! app ::session :event/signup-success))))
+
+  (error-action [{:keys [app]}]
+                (df/remove-load-marker! app ::signup))
+
+  (remote [{:keys [state] :as env}]
+          (let [{:account/keys [email password password-again]} (get-in @state signup-ident)]
+            (let [valid? (boolean (and (fu/valid-email? email) (fu/valid-password? password)
+                                       (= password password-again)))]
+              (when valid?
+                (-> env (m/returning Session)))))))

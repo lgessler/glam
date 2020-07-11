@@ -13,12 +13,11 @@
     [dv.fulcro-util :as fu]
     [glam.models.session :as session]
     [glam.client.router :as r]
-    [glam.models.session :refer [session-join Session get-session]]
+    [glam.models.session :refer [session-join Session get-session signup-ident signup]]
     [sablono.util :as su]
     [taoensso.timbre :as log]
     [com.fulcrologic.fulcro.components :as c]))
 
-(def signup-ident [:component/id :signup])
 (declare Signup)
 
 (defn clear-signup-form*
@@ -35,34 +34,6 @@
 (defmutation clear-signup-form [_]
   (action [{:keys [state]}]
     (swap! state clear-signup-form*)))
-
-(defmutation signup [_]
-  (action [{:keys [state]}]
-    (log/info "Starting signup mutation")
-    (swap! state
-      (fn [s]
-        (-> s
-          (fs/mark-complete* signup-ident)
-          (assoc-in [df/marker-table ::signup] {:status :loading})))))
-
-  (ok-action [{:keys [app state result]}]
-    (let [state @state
-          session (fdn/db->tree (comp/get-query Session) [:component/id :session] state)]
-      (log/info "Signup success result: " result)
-      (df/remove-load-marker! app ::signup)
-      (when (:session/valid? session)
-        (r/route-to! :home)
-        (uism/trigger! app ::session/session :event/signup-success))))
-
-  (error-action [{:keys [app]}]
-    (df/remove-load-marker! app ::signup))
-
-  (remote [{:keys [state] :as env}]
-    (let [{:account/keys [email password password-again]} (get-in @state signup-ident)]
-      (let [valid? (boolean (and (fu/valid-email? email) (fu/valid-password? password)
-                              (= password password-again)))]
-        (when valid?
-          (-> env (m/returning Session)))))))
 
 (defmutation
   mark-complete!* [{field :field}]
@@ -107,7 +78,7 @@
      [:form
       {:class    (str "ui form" (when checked? " error"))
        :onSubmit submit!}
-      ^:inline (fu/ui-email this :account/email email mark-complete! :autofocus? true
+      ^:inline (fu/ui-email this :account/email email mark-complete! :autofocus? false
                  :tabIndex 1)
       ^:inline (fu/ui-password2 this :account/password password :tabIndex 2)
       ^:inline (fu/ui-verify-password this :account/password-again
