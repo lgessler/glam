@@ -9,7 +9,7 @@
     [glam.client.router :as r]
     [glam.client.ui.common :refer [loader]]
     [glam.client.ui.project.core :refer [ProjectRouter]]
-    [glam.client.ui.user-settings :refer [UserSettings]]
+    [glam.client.ui.user-settings.core :refer [UserSettings]]
     [glam.models.session :refer [Session session-join valid-session?]]
     [glam.client.ui.home :refer [Home]]
     [glam.client.ui.login :refer [ui-navbar-login NavbarLogin Login]]))
