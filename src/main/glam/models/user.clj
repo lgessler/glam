@@ -5,9 +5,10 @@
     [cryptohash-clj.impl.argon2 :refer [chash verify]]
     [com.fulcrologic.guardrails.core :refer [>defn => | ?]]
     [com.wsscode.pathom.connect :as pc :refer [defresolver defmutation]]
-    [dv.fulcro-util :as fu]
+    [taoensso.timbre :as log]
     [glam.neo4j.user :as user]
-    [taoensso.timbre :as log]))
+    [glam.models.common :refer [server-error server-message]]
+    ))
 
 (defn hash-password [password]
   (chash password))
@@ -52,4 +53,22 @@
                   (rename-keys keymap)
                   (select-keys [:user/id]))})
 
-(def resolvers [user-resolver all-users-resolver])
+(pc/defmutation change-password
+  [{:keys [neo4j] :as env} {:keys [:user/email current-password new-password]}]
+  {::pc/sym 'glam.models.user/change-password}
+  (let [user-id (user/get-id-by-email neo4j {:email email})]
+    (if (nil? user-id)
+      (server-error (str "No user found with email " email))
+      (let [{:keys [password_hash]} (user/get-props neo4j {:uuid user-id})]
+        (if-not (verify-password current-password password_hash)
+          (server-error (str "Current password incorrect"))
+          (do
+            (user/set-password-hash
+              neo4j
+              {:uuid          user-id
+               :password_hash (hash-password new-password)})
+            (server-message "Password change successful")))))))
+
+(def resolvers [user-resolver
+                all-users-resolver
+                change-password])

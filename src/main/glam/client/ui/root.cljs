@@ -10,7 +10,7 @@
     [glam.client.ui.common :refer [loader]]
     [glam.client.ui.project.core :refer [ProjectRouter]]
     [glam.client.ui.user-settings.core :refer [UserSettings]]
-    [glam.models.session :refer [Session session-join valid-session?]]
+    [glam.models.session :as session :refer [Session session-join valid-session?]]
     [glam.client.ui.home :refer [Home]]
     [glam.client.ui.login :refer [ui-navbar-login NavbarLogin Login]]))
 
@@ -36,9 +36,9 @@
                    session-join
                    {:root/login (c/get-query NavbarLogin)}]
    :ident         (fn [] [:component/id :page-container])
-   :initial-state (fn [_] {:root/router             (c/get-initial-state TopRouter {})
-                           :root/login              (c/get-initial-state NavbarLogin {})
-                           [:component/id :session] (c/get-initial-state Session {})})}
+   :initial-state (fn [_] {:root/router          (c/get-initial-state TopRouter {})
+                           :root/login           (c/get-initial-state NavbarLogin {})
+                           session/session-ident (c/get-initial-state Session {})})}
   (let [session? (valid-session? props)]
     [:.ui.container
      ^:inline (menu {:session? session? :login login})

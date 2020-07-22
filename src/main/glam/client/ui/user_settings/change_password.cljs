@@ -1,14 +1,15 @@
 (ns glam.client.ui.user-settings.change-password
   (:require [com.fulcrologic.fulcro.components :as c :refer [defsc]]
             [com.fulcrologic.fulcro.algorithms.form-state :as fs]
-            [com.fulcrologic.fulcro.mutations :as m]
+            [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
             [com.fulcrologic.fulcro.dom :as dom]
             [sablono.core :as html :refer [html]]
             [glam.client.ui.common :as common]
             [glam.client.router :as r]
             [glam.models.session :as sn]
             [glam.models.user :as user]
-            [glam.models.user-common :refer [valid-password]]))
+            [glam.models.user-common :refer [valid-password]]
+            [taoensso.timbre :as log]))
 
 (def ident [:component/id :change-password-form])
 
@@ -26,57 +27,105 @@
   (c/transact! this [(fs/mark-complete! {:entity-ident ident
                                          :field        field})]))
 
+(defmutation mark-busy [{:keys [busy?]}]
+  (action [{:keys [state]}]
+          (swap! state #(assoc-in % (conj ident :busy?) busy?))))
+
+(defmutation handle-server-message [{:server/keys [message error?]}]
+  (action [{:keys [state]}]
+          (swap! state (fn [s]
+                         (-> s
+                             (assoc-in (conj ident :server-msg) message)
+                             (assoc-in (conj ident :server-err) error?))))))
+
 (defsc ChangePasswordForm [this {:keys [current-password
                                         new-password-confirm
                                         new-password
+                                        server-msg
+                                        server-err
                                         busy?]
                                  :as   props}]
   {:ident         (fn [_] ident)
    :query         [fs/form-config-join
+                   sn/session-join
                    :current-password
                    :new-password
                    :new-password-confirm
+                   :server-msg
+                   :server-err
                    :busy?]
    :initial-state (fn [_]
-                    (js/console.log "OoOoOo")
                     (fs/add-form-config ChangePasswordForm
                                         {:current-password     ""
                                          :new-password         ""
                                          :new-password-confirm ""
+                                         :server-msg           ""
+                                         :server-err           false
                                          :busy?                false}))
    :form-fields   #{:current-password :new-password :new-password-confirm}}
   (let [error? (some #(= :invalid (validator props %))
-                     [:current-password :new-password :new-password-confirm])]
+                     [:current-password :new-password :new-password-confirm])
+        submit (fn []
+                 (when-not busy?
+                   (c/transact! this [(handle-server-message {:server/error?  ""
+                                                              :server/message ""})
+                                      (mark-busy {:busy? true})
+                                      (user/change-password
+                                        {:current-password current-password
+                                         :new-password     new-password
+                                         :user/email       (:user/email (sn/get-session props))
+                                         :form-component   this
+                                         :on-success       [(mark-busy {:busy? false})
+                                                            (fs/clear-complete! {})
+                                                            (fs/reset-form! {})]
+                                         :on-error         [(mark-busy {:busy? false})]
+                                         :message-handler  handle-server-message})])))]
     ;; wrap in (html ...) so we can use Sablono's fragment tag, :*
     (html
       [:div.ui.segment
        [:h2 "Change Password"]
-       [:div.ui.form {:class [(when error? "error")]}
+       (when-not (empty? server-msg)
+         [:div.ui.message {:class [(if server-err "error" "success")]} server-msg])
+       [:form.ui.form {:class    [(when error? "error")]
+                       :onSubmit (fn [^js/Event e]
+                                   (.preventDefault e)
+                                   (log/info "submit")
+                                   (submit))}
         (common/input-with-label this :current-password "Current Password" validator "Password must be 8 or more characters long"
           {:type     "password"
            :value    current-password
            :disabled busy?
            :onBlur   #(complete-field this :current-password)
-           :onChange #(m/set-string! this :current-password :event %)})
+           :onChange #(m/set-string!! this :current-password :event %)})
         (common/input-with-label this :new-password "New Password" validator "Password must be 8 or more characters long"
           {:type     "password"
            :value    new-password
            :disabled busy?
            :onBlur   #(complete-field this :new-password)
-           :onChange #(m/set-string! this :new-password :event %)})
+           :onChange #(m/set-string!! this :new-password :event %)})
         (common/input-with-label this :new-password-confirm "Confirm New Password" validator "Passwords must match"
           {:type     "password"
            :value    new-password-confirm
            :disabled busy?
            :onBlur   #(complete-field this :new-password-confirm)
-           :onChange #(m/set-string! this :new-password-confirm :event %)})
+           :onChange (fn [e]
+                       (m/set-string!! this :new-password-confirm :event e)
+                       ;; also mark complete when it's valid since this is the last in the form
+                       (complete-field this :new-password-confirm))})
         [:button.ui.primary.button
-         {:disabled (or (not (fs/checked? props)) (not= :valid (validator props)))}
+         {:onClick  #(submit)
+          :disabled (or (not (fs/checked? props))
+                        (not= :valid (validator props))
+                        busy?)
+          :class    [(when busy? "loading")]}
          "Change Password"]
         [:button.ui.button
-         {:onClick (fn []
-                     (c/transact! this [(fs/clear-complete! {})])
-                     (c/transact! this [(fs/reset-form! {})]))}
+         {:onClick  (fn []
+                      (c/transact! this [(handle-server-message {:server/error?  false
+                                                                 :server/message ""})])
+                      (c/transact! this [(fs/clear-complete! {})])
+                      (c/transact! this [(fs/reset-form! {})]))
+          :disabled busy?}
          "Reset"]]])))
 
 (def ui-change-password-form (c/factory ChangePasswordForm))

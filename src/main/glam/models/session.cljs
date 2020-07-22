@@ -13,11 +13,13 @@
     [com.fulcrologic.fulcro.algorithms.denormalize :as fdn]
     [com.fulcrologic.fulcro.data-fetch :as df]))
 
+(def session-ident [:component/id :session])
+
 ;; query-only defsc for normalization
 (defsc Session
   [_ {:keys [:session/valid? :user/email :session/server-error-msg]}]
   {:query         [:session/valid? :session/server-error-msg :user/email :ui/loading?]
-   :ident         (fn [] [:component/id :session])
+   :ident         (fn [] session-ident)
    :pre-merge     (fn [{:keys [data-tree]}]
                     (merge
                       {:session/valid?           false
@@ -26,11 +28,11 @@
                       data-tree))
    :initial-state {:session/valid? false :user/email "" :session/server-error-msg nil}})
 
-(def session-join {[:component/id :session] (comp/get-query Session)})
+(def session-join {session-ident (comp/get-query Session)})
 
-(defn get-session [props] (get props [:component/id :session]))
+(defn get-session [props] (get props session-ident))
 
-(defn valid-session? [props] (:session/valid? (get props [:component/id :session])))
+(defn valid-session? [props] (:session/valid? (get props session-ident)))
 
 (defn clear [env]
   (sm/assoc-aliased env :error ""))
@@ -145,7 +147,7 @@
 
   (ok-action [{:keys [app state result]}]
              (let [state @state
-                   session (fdn/db->tree (comp/get-query Session) [:component/id :session] state)]
+                   session (fdn/db->tree (comp/get-query Session) session-ident state)]
                (log/info "Signup success result: " result)
                (df/remove-load-marker! app ::signup)
                (when (:session/valid? session)
