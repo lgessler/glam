@@ -451,7 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_introduction">1. Introduction</a></li>
 <li><a href="#_core_concepts">2. Core Concepts</a>
 <ul class="sectlevel2">
-<li><a href="#_document_structure">2.1. Document Structure</a>
+<li><a href="#_layers">2.1. Layers</a>
 <ul class="sectlevel3">
 <li><a href="#_text">2.1.1. Text</a></li>
 <li><a href="#_token">2.1.2. Token</a></li>
@@ -460,7 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_vocabulary">2.1.5. Vocabulary</a></li>
 </ul>
 </li>
-<li><a href="#_projects">2.2. Projects</a></li>
+<li><a href="#_universality">2.2. Universality</a></li>
 </ul>
 </li>
 <li><a href="#_user_workflows">3. User Workflows</a>
@@ -495,20 +495,20 @@ While Glam is usable for many different kinds of annotation projects, it was ori
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Flexible Data Model</strong>: users should be able to record however much data and whatever kind of data they desire.
+<p><strong>Flexible Data</strong>: you should be able to record however much data and whatever kind of data you desire.
 Annotating anything from good old-fashioned <a href="https://en.wikipedia.org/wiki/Interlinear_gloss">interlinear glossed text</a> to more complicated formats like <a href="https://universaldependencies.org/format.html">Universal Dependencies</a> should be possible and easy.</p>
 </li>
 <li>
-<p><strong>Seamless collaboration</strong>: working with others should be frictionless&#8212;&#8203;users should be able to share data without thinking about it, changes made to data should be viewable by everyone in real time, and new users should be able to be onboarded quickly.</p>
+<p><strong>Seamless Collaboration</strong>: working with others should be frictionless&#8212;&#8203;you should be able to share data without even clicking a button, changes should be viewable by everyone in real time, and everyone should be able to pick the system up quickly.</p>
 </li>
 <li>
 <p><strong>Durability</strong>: data should never be lost&#8212;&#8203;all past states of the database should be recorded and accessible.</p>
 </li>
 <li>
-<p><strong>NLP model integration</strong>: it should be easy to configure cutting-edge NLP models to provide best possible annotations to be corrected by humans, and have them train incrementally as new gold annotations become available.</p>
+<p><strong>NLP Model Integration</strong>: it should be easy to configure cutting-edge NLP models to provide best possible annotations to be corrected by humans, and have them train incrementally as new gold annotations become available.</p>
 </li>
 <li>
-<p><strong>Hackable UIs</strong>: Programmers who want to provide new UIs for different kinds of annotation (e.g. entity recognition, syntax, and coreference) should be able to do so just by writing JavaScript using the Glam API, with no backend changes required.</p>
+<p><strong>Pluggable UIs</strong>: if you want to code new UIs for different kinds of annotation (e.g. entity recognition, syntax, and coreference), you should be able to do so just by writing JavaScript using the Glam API, with no backend changes required.</p>
 </li>
 </ul>
 </div>
@@ -517,32 +517,149 @@ Annotating anything from good old-fashioned <a href="https://en.wikipedia.org/wi
 <div class="sect1">
 <h2 id="_core_concepts"><a class="anchor" href="#_core_concepts"></a><a class="link" href="#_core_concepts">2. Core Concepts</a></h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Glam allows different <strong>users</strong> to collaborate on different <strong>projects</strong>.
+Administrators may grant users read or write privileges on different projects, and projects are otherwise simply collections of <strong>documents</strong>.
+Documents may have different kinds of data, and a project&#8217;s layer configuration determines what kind of data will be created for that project.</p>
+</div>
 <div class="sect2">
-<h3 id="_document_structure"><a class="anchor" href="#_document_structure"></a><a class="link" href="#_document_structure">2.1. Document Structure</a></h3>
+<h3 id="_layers"><a class="anchor" href="#_layers"></a><a class="link" href="#_layers">2.1. Layers</a></h3>
+<div class="paragraph">
+<p>At the heart of Glam is the concept of a <strong>layer</strong>.
+A layer represents a single kind of data that is to be captured in documents in a project.
+By the addition and combination of layers, different projects are able to record whatever data is most appropriate in their documents.
+Projects may have as many or as few of each layer as is appropriate.</p>
+</div>
 <div class="sect3">
 <h4 id="_text"><a class="anchor" href="#_text"></a><a class="link" href="#_text">2.1.1. Text</a></h4>
-
+<div class="paragraph">
+<p>A text layer holds strings of text that form the foundation of documents.
+Most projects will only have one text layer, though it is possible to create more than one.
+(One such rare occasion might be when the same text has been given in two different languages, and both versions of the text need to be annotated.)</p>
+</div>
+<div class="paragraph">
+<p>There are no constraints on what texts can contain, except one: many of Glam&#8217;s core interfaces assume that one line in the text will roughly correspond to something like a sentence.
+Texts should be edited accordingly, and very long lines should be avoided if possible.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Some things that you might feel like modeling with multiple text layers might actually be better modeled with other layers.
+For example, you might want to model different speakers in conversational texts with different text layers, but speakers are different and variable across documents, so this is actually better modeled by having a span layer for speakers.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_token"><a class="anchor" href="#_token"></a><a class="link" href="#_token">2.1.2. Token</a></h4>
-
+<div class="paragraph">
+<p>A token layer contains tokens, which are defined as non-overlapping, non-empty, continuous substrings of a text layer which the token layer depends on.
+Tokens provide basic units for further linguistic analysis, and will most commonly capture something like a morpheme or a word.
+It therefore may be desirable to have multiple token layers in some situations.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_span"><a class="anchor" href="#_span"></a><a class="link" href="#_span">2.1.3. Span</a></h4>
-
+<div class="paragraph">
+<p>A span layer contains spans and depends on a token layer.
+Spans are anchored to tokens from the token layer it depends on: each span must be linked to at least one token from that token layer.
+(Associated tokens do not need to be contiguous.)
+Spans may also have a <strong>value</strong>, which is either a plain text value or an entry in a vocabulary (see below).</p>
+</div>
+<div class="paragraph">
+<p>Many kinds of span layers will have spans which always span exactly one token&#8212;&#8203;these might express common information such as grammatical category, or part of speech.
+Other span layers will have much wider spans, such as a translation span layer, whose spans would cover entire sentences.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_relation"><a class="anchor" href="#_relation"></a><a class="link" href="#_relation">2.1.4. Relation</a></h4>
-
+<div class="paragraph">
+<p>A relation layer depends on a single span layer and holds edges between spans.
+These edges are directed (one span is the source, the other is the target), and must always connect exactly two spans from the span layer.
+The relation also has a value like spans do: either a plain text value, or an item from a vocabulary.
+Many projects will not need relation layers, but they are critical for expressing some kinds of data such as coreference links and syntax trees.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+We are optimistic that a relation layer will only ever need to involve spans from a single span layer, but if you are in a situation where you feel that you need relations to connect spans from different layers, please <a href="https://github.com/lgessler/glam/discussions">discuss your situation</a> with us.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_vocabulary"><a class="anchor" href="#_vocabulary"></a><a class="link" href="#_vocabulary">2.1.5. Vocabulary</a></h4>
-
+<div class="paragraph">
+<p>A vocabulary is simply a list of items which have at minimum a <strong>form</strong>.
+A vocabulary may also specify additional fields that each item should have, which will be able to hold arbitrary text as information.
+Vocabularies may be <strong>closed</strong> or <strong>open</strong>: if a vocabulary is closed, then only administrators will be able to add more items, and if it is open, then regular users will be able to extend the vocabulary with new items during regular use.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+For now, additional vocabulary fields will only be able to hold plain strings, but if you would like something beyond that, please <a href="https://github.com/lgessler/glam/discussions">describe your needs</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Unlike the other layer types, vocabularies are <strong>global</strong> and are not associated with a project.
+Vocabularies come in two different varieties: if a vocabulary is to be used with a token layer, then it is an <strong>alloformic vocabulary</strong>, and if it is to be used with a span or relation layer, it is a <strong>basic vocabulary</strong>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Basic Vocabulary</div>
+<p>In this kind of vocabulary, spans and relations whose values refer to a vocabulary item will have exactly that vocabulary item&#8217;s form as its value.
+This is suitable for annotations like grammatical categories, POS tags, lemmas, and morphological features.</p>
+</div>
+<div class="paragraph">
+<div class="title">Alloformic Vocabulary</div>
+<p>Alloformic vocabularies are used with token layers, and help address the fact that formal units of linguistic analysis such as words of morphemes often do not surface in texts in their citation form: for example, the Turkish plural marker may surface as either <em>-lar</em> or <em>-ler</em> depending on vowel harmony, but we would like them both to correspond to a single vocabulary item for a morphemic analysis.
+An alloformic vocabulary therefore still requires that each item have a canonical <strong>form</strong> which is to serve as a citation form, but it relaxes the requirement that an instantiation of this item have exactly the canonical form.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_projects"><a class="anchor" href="#_projects"></a><a class="link" href="#_projects">2.2. Projects</a></h3>
-
+<h3 id="_universality"><a class="anchor" href="#_universality"></a><a class="link" href="#_universality">2.2. Universality</a></h3>
+<div class="paragraph">
+<p>The five layer types described above are technically and conceptually simple.
+Recall that one of Glam&#8217;s goals is to allow you to record any kind of data.
+Can we really expect to accommodate any kind of data using just the five layer types?</p>
+</div>
+<div class="paragraph">
+<p>Cautiously, we expect that the answer is yes.
+Researchers in <a href="https://corpus-tools.org/salt/">NLP</a> and <a href="https://corpus-tools.org/salt/">corpus linguistics</a>, among others, have already described very similar data models and expressed faith (supported by experimental successes) in their ability to express almost any linguistic formalism.
+So, if there is some kind of data you wish to annotate, you can expect that Glam&#8217;s layer system will be able to handle it.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If you&#8217;re struggling to come up with a plan for your data, don&#8217;t hesitate to make a post on the <a href="https://github.com/lgessler/glam/discussions">discussions page</a> so others can give you advice.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>However, what is not necessarily guaranteed is that Glam will provide you with an ergonomic interface for annotating documents in your layer system.
+Glam tries to provide sensible interfaces for the most common kinds of linguistic annotation (such as interlinear glossing), but if your needs are more complex (as they would be with something like constituency treebanking), Glam&#8217;s interfaces may not be especially ergonomic, and you should consider developing your own UI.</p>
+</div>
 </div>
 </div>
 </div>
@@ -656,7 +773,9 @@ Creation will only succeed if all characters do not belong to any existing token
 <div class="sect3">
 <h4 id="_interlinear"><a class="anchor" href="#_interlinear"></a><a class="link" href="#_interlinear">3.1.3. Interlinear</a></h4>
 <div class="paragraph">
-<p>TODO</p>
+<p>The interlinear interface allows <a href="#_project_configuration">properly configured span layers</a> to be edited.
+For each token, each token-level span layer will have a single field, and for each sentence, each sentence-level span layer will also have a single field.
+Changes in the spans' values will be propagated to other users as soon as your cursor leaves a field.</p>
 </div>
 </div>
 </div>
@@ -666,11 +785,13 @@ Creation will only succeed if all characters do not belong to any existing token
 <h2 id="_administrator_workflows"><a class="anchor" href="#_administrator_workflows"></a><a class="link" href="#_administrator_workflows">4. Administrator Workflows</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Administrators are privileged users that can</p>
+<p>Administrators are privileged users that can configure all aspects of a Glam instance.</p>
 </div>
 <div class="sect2">
 <h3 id="_user_management"><a class="anchor" href="#_user_management"></a><a class="link" href="#_user_management">4.1. User Management</a></h3>
-
+<div class="paragraph">
+<p>Administrators can create new users and manage existing users (<code>/admin/user</code>).</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_project_configuration"><a class="anchor" href="#_project_configuration"></a><a class="link" href="#_project_configuration">4.2. Project Configuration</a></h3>
@@ -683,6 +804,11 @@ Span layers will vary most across projects, as they contain the span-level lingu
 <div class="title">Span Configuration for Interlinear Editor</div>
 <p>The interlinear editor needs to know which span layers represent token-level information (e.g. a POS tag or a grammatical category), and which represent sentence-level information (e.g. a translation).
 Once you have configured your project&#8217;s layers, go to the "Interfaces" tab of the admin&#8217;s project management activity and configure the span layers you wish to use in the interlinear editor.</p>
+</div>
+<div class="paragraph">
+<div class="title">Read and Write Privileges</div>
+<p>By default, non-admin users are not allowed to view or edit any projects.
+To grant them access, navigate to a project in the Project Management admin activity, visit the "Access" tab, and grant each user the appropriate privileges.</p>
 </div>
 </div>
 </div>
@@ -710,7 +836,7 @@ This section is intended only for people who want to extend Glam. You do not nee
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-01-10 12:56:56 -0500
+Last updated 2022-01-14 14:07:59 -0500
 </div>
 </div>
 </body>
