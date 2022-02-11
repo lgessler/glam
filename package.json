@@ -32,7 +32,7 @@
     "fast-diff": "^1.2.0",
     "highlight.js": "^10.7.3",
     "json-beautify": "^1.1.1",
-    "karma": "^6.3.4",
+    "karma": "^6.3.14",
     "karma-chrome-launcher": "^3.1.0",
     "karma-cljs-test": "^0.1.0",
     "marked": "^4.0.10",
