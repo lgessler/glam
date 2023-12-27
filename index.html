@@ -434,6 +434,95 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
+<style>
+/*! Stylesheet for CodeRay to loosely match GitHub themes | MIT License */
+pre.CodeRay{background:#f7f7f8}
+.CodeRay .line-numbers{border-right:1px solid;opacity:.35;padding:0 .5em 0 0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+.CodeRay span.line-numbers{display:inline-block;margin-right:.75em}
+.CodeRay .line-numbers strong{color:#000}
+table.CodeRay{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.CodeRay td{vertical-align:top;line-height:inherit}
+table.CodeRay td.line-numbers{text-align:right}
+table.CodeRay td.code{padding:0 0 0 .75em}
+.CodeRay .debug{color:#fff!important;background:navy!important}
+.CodeRay .annotation{color:#007}
+.CodeRay .attribute-name{color:navy}
+.CodeRay .attribute-value{color:#700}
+.CodeRay .binary{color:#509}
+.CodeRay .comment{color:#998;font-style:italic}
+.CodeRay .char{color:#04d}
+.CodeRay .char .content{color:#04d}
+.CodeRay .char .delimiter{color:#039}
+.CodeRay .class{color:#458;font-weight:bold}
+.CodeRay .complex{color:#a08}
+.CodeRay .constant,.CodeRay .predefined-constant{color:teal}
+.CodeRay .color{color:#099}
+.CodeRay .class-variable{color:#369}
+.CodeRay .decorator{color:#b0b}
+.CodeRay .definition{color:#099}
+.CodeRay .delimiter{color:#000}
+.CodeRay .doc{color:#970}
+.CodeRay .doctype{color:#34b}
+.CodeRay .doc-string{color:#d42}
+.CodeRay .escape{color:#666}
+.CodeRay .entity{color:#800}
+.CodeRay .error{color:#808}
+.CodeRay .exception{color:inherit}
+.CodeRay .filename{color:#099}
+.CodeRay .function{color:#900;font-weight:bold}
+.CodeRay .global-variable{color:teal}
+.CodeRay .hex{color:#058}
+.CodeRay .integer,.CodeRay .float{color:#099}
+.CodeRay .include{color:#555}
+.CodeRay .inline{color:#000}
+.CodeRay .inline .inline{background:#ccc}
+.CodeRay .inline .inline .inline{background:#bbb}
+.CodeRay .inline .inline-delimiter{color:#d14}
+.CodeRay .inline-delimiter{color:#d14}
+.CodeRay .important{color:#555;font-weight:bold}
+.CodeRay .interpreted{color:#b2b}
+.CodeRay .instance-variable{color:teal}
+.CodeRay .label{color:#970}
+.CodeRay .local-variable{color:#963}
+.CodeRay .octal{color:#40e}
+.CodeRay .predefined{color:#369}
+.CodeRay .preprocessor{color:#579}
+.CodeRay .pseudo-class{color:#555}
+.CodeRay .directive{font-weight:bold}
+.CodeRay .type{font-weight:bold}
+.CodeRay .predefined-type{color:inherit}
+.CodeRay .reserved,.CodeRay .keyword{color:#000;font-weight:bold}
+.CodeRay .key{color:#808}
+.CodeRay .key .delimiter{color:#606}
+.CodeRay .key .char{color:#80f}
+.CodeRay .value{color:#088}
+.CodeRay .regexp .delimiter{color:#808}
+.CodeRay .regexp .content{color:#808}
+.CodeRay .regexp .modifier{color:#808}
+.CodeRay .regexp .char{color:#d14}
+.CodeRay .regexp .function{color:#404;font-weight:bold}
+.CodeRay .string{color:#d20}
+.CodeRay .string .string .string{background:#ffd0d0}
+.CodeRay .string .content{color:#d14}
+.CodeRay .string .char{color:#d14}
+.CodeRay .string .delimiter{color:#d14}
+.CodeRay .shell{color:#d14}
+.CodeRay .shell .delimiter{color:#d14}
+.CodeRay .symbol{color:#990073}
+.CodeRay .symbol .content{color:#a60}
+.CodeRay .symbol .delimiter{color:#630}
+.CodeRay .tag{color:teal}
+.CodeRay .tag-special{color:#d70}
+.CodeRay .variable{color:#036}
+.CodeRay .insert{background:#afa}
+.CodeRay .delete{background:#faa}
+.CodeRay .change{color:#aaf;background:#007}
+.CodeRay .head{color:#f8f;background:#505}
+.CodeRay .insert .insert{color:#080}
+.CodeRay .delete .delete{color:#800}
+.CodeRay .change .change{color:#66f}
+.CodeRay .head .head{color:#f4f}
+</style>
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
@@ -479,6 +568,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_developers_guide">5. Developer&#8217;s Guide</a>
 <ul class="sectlevel2">
 <li><a href="#_code_atlas">5.1. Code Atlas</a></li>
+<li><a href="#_glam_xtdb">5.2. glam.xtdb</a>
+<ul class="sectlevel3">
+<li><a href="#_basics">5.2.1. Basics</a></li>
+<li><a href="#_transaction_functions">5.2.2. Transaction Functions</a></li>
+<li><a href="#_idents">5.2.3. Idents</a></li>
+<li><a href="#_namespace_overview">5.2.4. Namespace Overview</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -691,7 +788,7 @@ For example, consider the following raw text:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>Ox-en plow-ing the field-s</code></pre>
+<pre class="CodeRay highlight"><code>Ox-en plow-ing the field-s</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -700,7 +797,7 @@ The text above would therefore look like so, where the numbers under each charac
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>Oxen plowing the fields
+<pre class="CodeRay highlight"><code>Oxen plowing the fields
 1122 3333444 555 666667</code></pre>
 </div>
 </div>
@@ -709,7 +806,7 @@ The text above would therefore look like so, where the numbers under each charac
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>The ice--cream melt-ed
+<pre class="CodeRay highlight"><code>The ice--cream melt-ed
 =&gt;
 The ice-cream melted
 111 222344444 555566</code></pre>
@@ -923,12 +1020,192 @@ As of the writing of this section, this has not been done yet, but this may chan
 This is where they live.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_glam_xtdb"><a class="anchor" href="#_glam_xtdb"></a><a class="link" href="#_glam_xtdb">5.2. glam.xtdb</a></h3>
+<div class="paragraph">
+<p>Instead of a SQL database, Glam uses <a href="https://www.xtdb.com/">XTDB</a> for data persistence.
+XTDB has some unusual features.
+One very exciting one for us is that it is immutable, meaning that whenever a write happens, the previous state of the database is not overwritten.
+Because of this, every past state of the database is viewable.
+XTDB has other features which make it well suited to our task.</p>
+</div>
+<div class="paragraph">
+<p>In this section, we&#8217;ll review how Glam implements its core data model using XTDB.
+This section assumes familiarity with the basics of XTDB and Glam&#8217;s data model.
+Consult the <a href="https://www.xtdb.com/learn">XTDB learning materials</a> and the earlier sections of this document respectively before proceeding.</p>
+</div>
+<div class="sect3">
+<h4 id="_basics"><a class="anchor" href="#_basics"></a><a class="link" href="#_basics">5.2.1. Basics</a></h4>
+<div class="paragraph">
+<p>Just as you might expect the data for a document to be spread out across different tables for a SQL approach, in XTDB, we make a separate document for every different kind of data that makes up a project or a document.
+Every token, for example, will have its own document.
+Each document has attributes, which you can again think of as analogous to a SQL column.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s consider an example. A <code>token</code> document has the following attributes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>:token/id</code>: the ID of this token. Note this is also stored on <code>:xt/id</code>, which is a required property for all XTDB documents. The reason why we also have <code>:token/id</code> in addition to <code>:xt/id</code> even though their values are the same is that querying for <code>:token/id</code> will allow us to easily find documents that represent tokens. Every other document also has an <code>:x/id</code> attribute like this, e.g. <code>:project/id</code>.</p>
+</li>
+<li>
+<p><code>:token/layer</code>: the ID of the layer that this token belongs to, i.e. the <code>:token-layer/id</code> of the <code>token-layer</code> associated document. In SQL, this would be a foreign key that you could use to facilitate joins.</p>
+</li>
+<li>
+<p><code>:token/text</code>: the ID of the text that this token is a token of, i.e. the <code>:text/id</code> of the associated text.</p>
+</li>
+<li>
+<p><code>:token/begin</code>, <code>:token/end</code>: substring indices for the text which indicate the bounds of this token.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Putting that all together (ignoring layers):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="clojure"><span class="comment">;; A text object</span>
+{<span class="symbol">:xt/id</span>      <span class="integer">1</span>
+ <span class="symbol">:text/id</span>    <span class="integer">1</span>
+ <span class="symbol">:text/layer</span> <span class="keyword">..</span><span class="keyword">.</span>
+ <span class="symbol">:text/body</span>  <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello, world</span><span class="delimiter">&quot;</span></span>}
+
+{<span class="symbol">:xt/id</span>       <span class="integer">2</span>
+ <span class="symbol">:token/id</span>    <span class="integer">2</span>
+ <span class="symbol">:token/layer</span> <span class="keyword">..</span><span class="keyword">.</span>
+ <span class="symbol">:token/text</span>  <span class="integer">1</span>
+ <span class="symbol">:token/begin</span> <span class="integer">0</span>
+ <span class="symbol">:token/end</span>   <span class="integer">5</span>}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The token represented by the second document captures the substring <code>"Hello"</code> in the text.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_transaction_functions"><a class="anchor" href="#_transaction_functions"></a><a class="link" href="#_transaction_functions">5.2.2. Transaction Functions</a></h4>
+<div class="paragraph">
+<p>The data structures we just described are highly relational, and as such we need to take care to never allow an invalid state to occur.
+Every attribute which refers to another document with an ID must always be valid, or bad things will start happening.
+Consider, for example, what must happen when we delete a <code>text</code> object.
+If a <code>text</code> no longer exists, then we must be sure to delete all of the <code>token</code> objects that depend on it, and so on for dependents of <code>token</code> objects.
+And importantly, we must make sure that this deletion is an all-or-nothing affair: it would be bad if the deletion process succeeded only on some documents, or if database reads occurred while the deletion was in progress, yielding a view that would have invalid joins.</p>
+</div>
+<div class="paragraph">
+<p>XTDB has an elegant solution for this in the form of the <a href="https://www.xtdb.com/blog/xtdb-transaction-functions">transaction function</a>.
+First of all, recall that all writes happen with XTDB&#8217;s <code>submit-tx</code> function, which takes a vector of transaction operations which are executed in order.
+This alone isn&#8217;t enough, since XTDB&#8217;s primitive <code>:xtdb.api/delete</code> transaction operation isn&#8217;t sufficiently expressive for the detailed behavior our data model requires.
+For example, when a token is deleted, a span that contains that token should be deleted if and only if the token was the only one contained in the span.
+This is where the transaction function comes in: it allows us to define our own transaction operations that have the freedom of arbitrary code and the guarantees associated with being executed within a transaction by XTDB.</p>
+</div>
+<div class="paragraph">
+<p>To make using transaction functions as convenient as possible, we define new transaction functions using <code>glam.xtdb.easy/deftx</code>.
+Consider an example: <code>glam.xtdb.token/delete</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="clojure">(gxe/deftx delete [node eid]
+  (<span class="keyword">let</span> [spans (get-span-ids node eid)]
+    (<span class="keyword">into</span>
+      (<span class="keyword">reduce</span> <span class="keyword">into</span> (<span class="keyword">map</span> #(s/remove-token** node % eid) spans))
+      [(gxe/delete* eid)])))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This looks a lot like a normal function definition, but there are a few things to note about this.
+First of all, the first argument to the function must always be <code>node</code>, which will be bound to the XTDB node executing the function.
+Second, <code>deftx</code> actually defines <em>two</em> things.
+There is an internal version of the function that is trailed with <code>**</code>, and invoking this prepares an XTDB transaction which contains only the invocation of this transaction function.
+The normal version of this function without the <code>**</code> at the end does the same but also invokes the transaction immediately.
+Having these two variants allows us to use the asterisk-less version whenever we&#8217;re interested in that operation as our top-level goal, and the asterisk-ful version whenever we want to use that operation as a part of another operation.
+In the example above, we can see that this transaction function relies on another transaction function, <code>glam.xtdb.span/remove-token**</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Throughout glam.xtdb, it is a convention that any function ending with <code>*</code> will return a transaction operation, and any function ending with <code>**</code> will return a transaction (i.e., a vector of transaction operations).
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s go through an example to make all of that concrete, continuing with <code>glam.xtdb.token/delete</code>.
+First, let&#8217;s observe that this function is stored in the database:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="clojure">(gxe/entity user/node <span class="symbol">:glam.xtdb.token/delete</span>)
+=&gt;
+{<span class="symbol">:xt/id</span> <span class="symbol">:glam.xtdb.token/delete</span>
+ <span class="symbol">:xt/fn</span>
+ (clojure.core/fn
+  [node eid]
+  (<span class="keyword">let</span>
+   [spans (glam.xtdb.token/get-span-ids node eid)]
+    (<span class="keyword">into</span>
+     (<span class="keyword">reduce</span> <span class="keyword">into</span> (<span class="keyword">map</span> (fn* [p1__98802#] (glam.xtdb.span/remove-token** node p1__98802# eid)) spans))
+     [(glam.xtdb.easy/delete* eid)]))))}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This code should look very familiar&#8212;&#8203;it&#8217;s what we saw above!
+(Don&#8217;t worry about the minor differences on variable names&#8212;&#8203;that&#8217;s an implementation detail that you can safely ignore.)
+Now let&#8217;s see what the result of invoking <code>delete**</code> is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="clojure">(glam.xtdb.token/delete** node <span class="integer">5</span>)
+=&gt; [[<span class="symbol">:xtdb.api/fn</span> <span class="symbol">:glam.xtdb.token/delete</span> <span class="integer">5</span>]]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see, not much happens: all this does is to prepare the transaction function&#8217;s invocation by formatting it with its arguments.
+Nothing has happened to the database.
+Invoking <code>(glam.xtdb.token/delete node 5)</code>, on the other hand, would have submitted this to the database, equivalent to <code>(xtdb.api/submit-tx node (glam.xtdb.token/delete** node 5))</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_idents"><a class="anchor" href="#_idents"></a><a class="link" href="#_idents">5.2.3. Idents</a></h4>
+<div class="paragraph">
+<p>In most places in Glam, we will refer to an entity simply with its ID.
+This is true, for example, in all XTDB documents: <code>:token/text</code> has as its associated value the ID of the associated <code>text</code>.
+However, in some places, you will see idents, which are two-item vectors where the first value is a keyword like <code>:text/id</code> and the second value is the ID.
+This is called an <strong>ident</strong>, and it is another way of referring to an entity which encodes its type.
+We use idents because <a href="https://blog.wsscode.com/pathom/v2/pathom/2.2.0/introduction.html">Pathom</a> (the library we use for graph query processing) works in terms of them.
+For this reason, you will see that many namespaces have an <code>xt&#8594;pathom</code> function which will convert IDs to idents.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_namespace_overview"><a class="anchor" href="#_namespace_overview"></a><a class="link" href="#_namespace_overview">5.2.4. Namespace Overview</a></h4>
+<div class="paragraph">
+<p>All namespaces under <code>glam.xtdb</code> are devoted to a particular data type, with the following exceptions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>glam.xtdb.easy</code> has functions which offer a higher-level interface to XTDB.</p>
+</li>
+<li>
+<p><code>glam.xtdb.common</code> has mostly low-level helper functions which are used by other namespaces.</p>
+</li>
+<li>
+<p><code>glam.xtdb.access</code> contains the logic used in <code>glam.models</code> namespaces to determine whether a user is authorized to perform certain actions.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-20 20:29:38 -0500
+Last updated 2023-12-27 16:07:27 -0500
 </div>
 </div>
 </body>
