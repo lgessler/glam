@@ -11,6 +11,9 @@
             [glam.models.span :refer [span-resolvers]]
             [glam.models.relation :refer [relation-resolvers]]
             [glam.models.relation-layer :refer [relation-layer-resolvers]]
+            [glam.models.vocab-layer :refer [vocab-layer-resolvers]]
+            [glam.models.vocab-item :refer [vocab-item-resolvers]]
+            [glam.models.vocab-map :refer [vocab-map-resolvers]]
             [glam.models.session :as session]
             [glam.models.user :as user]
             [glam.models.common :refer [server-error]]
@@ -78,7 +81,10 @@
    span-layer-resolvers
    span-resolvers
    relation-layer-resolvers
-   relation-resolvers])
+   relation-resolvers
+   vocab-layer-resolvers
+   vocab-item-resolvers
+   vocab-map-resolvers])
 
 (defn env-additions [config node]
   (fn [env]
